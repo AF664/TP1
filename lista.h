@@ -17,6 +17,7 @@ class lista
 
     public:
     lista();
+    lista(const lista &);
     ~lista();
     bool vacia() const;
     void altaprin(const T &);
@@ -40,6 +41,21 @@ lista<T>::lista()
     pri_ = NULL;
     ult_ = NULL;
     tam_ = 0;
+}
+
+template <class T>
+lista<T>::lista(const lista<T> &orig)
+{
+    nodo <T> *aux;
+
+    pri_ = NULL;
+    ult_ = NULL;
+    tam_ = 0;
+    if(&orig == this || orig.vacia() == true)
+        return;
+    for(aux = orig.pri_; aux; aux = aux->getSig())
+        this->altaprin(aux->getDato);
+    tam_ = orig.tam_;
 }
 
 template <class T>
