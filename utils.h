@@ -25,8 +25,7 @@ size_t stringTrim(string &s);
 // como cadena de caracteres representando un número entero
 size_t stringDigits(string &s);
 
-//Remueve espacios
-string removeSpaces(string);
+
 
 
 #endif
