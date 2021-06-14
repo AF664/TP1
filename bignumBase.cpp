@@ -28,6 +28,8 @@ void bignumBase::_actualizar_largo()
     }
     else
         _largo = 0;
+    if( cero() )
+        _signo = POSITIVO;
 }
 
 void bignumBase::set_estado(status_t nuevo)
@@ -127,6 +129,8 @@ bool bignumBase::good() const
 
 bool bignumBase::cero() const
 {
+    if( _digitos == NULL)
+        return true;
     return (_largo==1 && _digitos[0]==0) ? true : false;
 
 }
@@ -313,6 +317,17 @@ bignumBase &bignumBase::operator+=(const bignumBase &sumando1)
     return *this;
 
 }
+
+bignumBase &bignumBase::operator+=(int numero)
+{
+    bignumBase *aux = clonarBignum();
+    *aux = numero;
+    *this += *aux;
+    delete aux;
+    return *this;
+
+}
+
 bignumBase &bignumBase::operator-=(const bignumBase &sustraendo)
 {
     bignumBase *aux = sustraendo.clonarBignum();
@@ -407,6 +422,32 @@ bignumBase &bignumBase::operator*=(int numero)
     return *this;
 }
 
+bignumBase &bignumBase::operator/=(const bignumBase &divisor)
+{
+    bignumBase *aux = this->clonarBignum();
+    signo_t signo_resultado  = ( signo() == divisor.signo() )? POSITIVO : NEGATIVO;
+
+  
+    set_signo( divisor.signo());
+
+    if( *this < divisor)
+        *this = 0;
+    else 
+    {
+        aux->_poner_a_cero();
+        while( *this >= divisor )
+        {
+            *this -= divisor;
+            (*aux)++;
+        }
+    }
+    aux->set_signo(signo_resultado);
+    *this = *aux;
+    delete aux;
+    return *this;
+    
+}
+
 std::istream& operator>>(std::istream &is ,bignumBase &num)
 {
     string linea;
@@ -418,4 +459,52 @@ std::istream& operator>>(std::istream &is ,bignumBase &num)
     return is;
 
 }
+
+bool operator<(bignumBase const &a, bignumBase const &b)
+{
+    bool resultado;
+    bignumBase *aux = a.clonarBignum();
+    *aux -=b;
+    
+    resultado = (aux->signo() == NEGATIVO)? true : false;
+    delete aux;
+    return resultado;
+}
+
+bool operator>(bignumBase const &a, bignumBase const &b)
+{
+    bool resultado;
+    bignumBase *aux = a.clonarBignum();
+    *aux -=b;
+    resultado = (aux->signo() == NEGATIVO)? false : true;
+    delete aux;
+    return resultado;
+}
+
+bool operator==(bignumBase const &a, bignumBase const &b)
+{
+    bool resultado;
+    bignumBase *aux = a.clonarBignum();
+    *aux -=b;
+    resultado = aux->cero();
+    delete aux;
+    return resultado;
+}
+
+bool operator<=(bignumBase const &a, bignumBase const &b)
+{
+    return (a < b || a == b);
+}
+
+bool operator>=(bignumBase const &a, bignumBase const &b)
+{
+    return (a >b || a == b);
+}
+
+
+bignumBase &bignumBase::operator++(int)
+{
+   return *this +=1;
+}
+
 
