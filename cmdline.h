@@ -8,6 +8,7 @@
 #define OPT_SEEN      1
 #define OPT_MANDATORY 2
 #define PRECISION_DEFAULT "20"
+#define MULTIPLICATION_DEFAULT "1"
 
 struct option_t {
 	int has_arg;
