@@ -6,25 +6,29 @@ using namespace std ;
 
 char DiccionarioOperaciones[]= {'+','-','*','\0'};
 
-calculadora::calculadora(unsigned precision =0 )
-{   
-    
-    _operando1 = bignum(precision);
-    _operando2 = bignum(precision);
-    _estado = OK ;
-    _operacion = NO_OP;
-}
 
 calculadora::calculadora()
 {
-    _operando1 = bignum(0);
-    _operando2 = bignum(0);
+    _operando1 = NULL;
+    _operando2 = NULL;
      _estado = OK ;
     _operacion = NO_OP;
 }
 
+calculadora::calculadora(bignumBase *op1, bignumBase *op2, unsigned precision)
+{
+    _operando1 = op1;
+    _operando2 = op2;
+    _operando1->_cambiar_precision(precision);
+    _operando2->_cambiar_precision(precision);
+    _estado = OK;
+    _operacion = NO_OP;
+
+}
+
 calculadora::~calculadora()
-{}
+{
+}
 
 
 void calculadora::set_operacion(operacion_t op)
@@ -42,27 +46,28 @@ bool calculadora::good()
     return (_estado == OK ? true : false );
 }
 
-bignum calculadora::resultado()
+bignumBase &calculadora::resultado()
 {
-    bignum res;
+    bignumBase *res= _operando1->nuevoBignum();
     if(this->good() )    
     {
         if( _operacion == SUMAR)
-            res = _operando1 + _operando2;
+            *res = *_operando1 + *_operando2;
     
         else if( _operacion == RESTAR)
-            res = _operando1 - _operando2;
+            *res = *_operando1 - *_operando2;
     
         else  if( _operacion == MULTIPLICAR)
-            res = _operando1 * _operando2;
-        this->_estado = res.estado();
+            *res = *_operando1 * *_operando2;
+        this->_estado = res->estado();
     }
     else
     {
         this->_estado = NOK;
-        res.set_estado(NOK);
+        res->set_estado(NOK);
     }
-    return res;
+    // -------------------------------------------< POSIBLE FUGA MEMORIA>
+    return *res;
 }
 
 calculadora &calculadora::operator=(const string &linea)
@@ -83,14 +88,14 @@ calculadora &calculadora::operator=(const string &linea)
         string sop = linea.substr(op,1);
         string sbignum2 = linea.substr(op+1);
 
-        _operando1 = sbignum1;
-        _operando2 = sbignum2;
+        *_operando1 = sbignum1;
+        *_operando2 = sbignum2;
 
 
         for( i=0 ; i< NO_OP && sop.find(DiccionarioOperaciones[i]) == std::string::npos ; i++)
             ;
 
-        _estado = (_operando1.good() && _operando2.good()) ? OK : NOK;
+        _estado = (_operando1->good() && _operando2->good()) ? OK : NOK;
         _operacion = ( i < NO_OP) ? ( operacion_t )i : NO_OP;
     }
 
@@ -117,7 +122,8 @@ istream& operator>>(std::istream &is ,calculadora &entrada)
  
  int main()
  {
-     calculadora operacion(20);
+     bignumMult op1(20), op2(20);
+     calculadora operacion(&op1, &op2, 20);
      string linea;
 
      while(!cin.eof())
