@@ -14,6 +14,7 @@ unsigned short *bignumBase::_crear_digitos(unsigned precision)
     digitos = precision ? new unsigned short[precision]: NULL;
     for( unsigned i=0; i< precision ; ++i)
         digitos[i]=0; 
+   
     return digitos;
 }
 
@@ -56,9 +57,9 @@ bignumBase::bignumBase()
 
 }
 
-bignumBase::bignumBase(unsigned precision)
+bignumBase::bignumBase(size_t precision)
 {
-    _digitos = _crear_digitos(precision);
+     _digitos = _crear_digitos(precision);
     _precision = precision;
     _largo = (precision > 0)? 1 : 0;
     _signo = POSITIVO;
@@ -79,8 +80,7 @@ bignumBase::bignumBase(const bignumBase &original)
 }
 
 bignumBase::bignumBase(const string &linea, size_t precision)
-{
-    
+{    
      _digitos = _crear_digitos(precision);
      _precision = precision;
 
@@ -92,6 +92,7 @@ bignumBase::~bignumBase()
 {
     if(_digitos!=NULL)
         delete [] _digitos;
+    
     
 }
 
@@ -273,57 +274,56 @@ bignumBase &bignumBase::_complemento_base_10()
     return *this;
 }
 
-bignumBase &operator+(const bignumBase &sumando1, const bignumBase &sumando2 )
+bignumBase &bignumBase::operator+=(const bignumBase &sumando1)
 {
-    // podría modificar la interfaz y hacer que pasen por copia
-    // pero por una cuestion de coherencia lo dejamos así
+    // se hace el clonado porque no se puede instanciar la clase
+    // bingumBase, ya que es abstracta.  
     bignumBase *s1 = sumando1.clonarBignum();
-    bignumBase *s2 = sumando2.clonarBignum();
 
     int carry; 
-    int signo = s1->_signo + s2->_signo;
-    if( !s1->good() || !s2->good())
+    int signo = _signo + s1->_signo;
+    if( !good() || !s1->good())
     {
-        s1->set_estado(NOK);
-        return *s1;
+        set_estado(NOK);
+        delete s1;
+        return *this;
     }
 
+    if( _signo == NEGATIVO)
+        _complemento_base_10();
     if( s1->_signo == NEGATIVO)
         s1->_complemento_base_10();
-    if( s2->_signo == NEGATIVO)
-        s2->_complemento_base_10();
     
-    s1->_suma_sin_signo( *s2 , carry );
+    this->_suma_sin_signo( *s1 , carry );
 
     signo -= carry ;
     if (signo < 0)
-        s1->set_estado(ERROR_OVERFLOW);
+        set_estado(ERROR_OVERFLOW);
     else if ( signo == 1)
     {  
-        s1->_signo = NEGATIVO;
-        s1->_complemento_base_10();
+        _signo = NEGATIVO;
+        _complemento_base_10();
     }
     else    
-        s1->_signo = POSITIVO;
-    s1->_actualizar_largo();
+        _signo = POSITIVO;
+    _actualizar_largo();
     
-       
-    // -------- ***** Me parece que se desreferencia el puntero.  
-    return *s1;
+    delete s1;  
+
+    return *this;
 
 }
-
-
-bignumBase &operator-(const bignumBase &minuendo, const bignumBase &sustraendo)
+bignumBase &bignumBase::operator-=(const bignumBase &sustraendo)
 {
-    bignumBase *resta = sustraendo.clonarBignum();
-    if( !resta->cero())
-        resta->set_signo( (resta->signo() == POSITIVO) ? NEGATIVO : POSITIVO ) ;
-
-    // -------***** Posible fuga
-    return *resta + minuendo;
-
+    bignumBase *aux = sustraendo.clonarBignum();
+    aux->set_signo( (aux->signo() == POSITIVO)? NEGATIVO : POSITIVO  );
+    *this += *aux;
+    delete aux;
+    return *this;
+     
 }
+
+
 
 bignumBase &bignumBase::_poner_a_cero()
 {
@@ -358,11 +358,7 @@ bignumBase &bignumBase::_desplazamiento_izq(unsigned shift)
     return *this; 
 
 }
-bignumBase &bignumBase::operator+=(const bignumBase &sumando)
-{
-    *this = *this + sumando;
-    return *this ;
-}
+
 bignumBase &bignumBase::_cambiar_precision(size_t precision)
 {
     unsigned short *tmp;
@@ -402,19 +398,14 @@ bignumBase &bignumBase::operator*=(int numero)
         *acumulador += aux->_desplazamiento_izq(i);
     }
     acumulador->_actualizar_largo();
+
     *this = *acumulador;
+
+    delete acumulador;
+    delete aux;
     
     return *this;
 }
-
-bignumBase &operator*(const bignumBase &factor1, int mult)
-{
-    bignumBase *aux=factor1.clonarBignum();
-    *aux *= mult;
-    // ----------------------------------------------------<posible fuga>
-    return *aux;
-}
-
 
 std::istream& operator>>(std::istream &is ,bignumBase &num)
 {
@@ -428,59 +419,3 @@ std::istream& operator>>(std::istream &is ,bignumBase &num)
 
 }
 
-#ifdef _TEST_BIGNUM
-int main()
-{
-    bignumBase numero1(20);
-    bignumBase numero2(20);
-    bignumBase operacion;
-    string linea("1234");
-    //int operando;
-
-    while( !cin.eof())
-    {
-       
-
-        cout << "Prueba suma: ingrese primer valor"<< '\n';
-        getline(cin,linea);
-        numero1=linea;
-        cout << "Prueba suma: ingrese segundo valor"<< '\n';
-        getline(cin,linea);
-        numero2=linea;
-        operacion = numero1 + numero2;
-        cout << numero1 << " + " << numero2 << " = " << operacion << '\n';
-        cout << "estado: " << operacion.estado() << '\n';
-
-        cout << "Prueba resta: ingrese primer valor"<< '\n';
-        getline(cin,linea);
-        numero1=linea;
-        cout << "Prueba resta: ingrese segundo valor"<< '\n';
-        getline(cin,linea);
-        numero2=linea;
-        operacion = numero1 - numero2;
-        
-        cout << numero1 << " - " << numero2 << " = " << operacion << '\n';
-        cout << "estado: " << operacion.estado() << '\n';
-
-       
-        cout << "Prueba multiplicacion: ingrese primer valor"<< '\n';
-        getline(cin,linea);
-        numero1=linea;
-        cout << "Prueba multiplicacion: ingrese segundo valor"<< '\n';
-        getline(cin,linea);
-        numero2=linea;
-        operacion = numero1 * numero2;
-        
-        cout << numero1 << " * " << numero2 << " = " << operacion << '\n';
-        cout << "estado: " << operacion.estado() << '\n';
-       
-       cout << "Prueba >>: ingrese un valor" << '\n';
-       cin >> numero1;
-       cout << "el valor ingresado es: " << numero1 << '\n';
-
-    }
-
-    return 0;
-    
-}
-#endif

@@ -28,6 +28,8 @@ calculadora::calculadora(bignumBase *op1, bignumBase *op2, unsigned precision)
 
 calculadora::~calculadora()
 {
+    delete _operando1;
+    delete _operando2;
 }
 
 
@@ -46,19 +48,19 @@ bool calculadora::good()
     return (_estado == OK ? true : false );
 }
 
-bignumBase &calculadora::resultado()
+bignumBase *calculadora::resultado()
 {
-    bignumBase *res= _operando1->nuevoBignum();
+    bignumBase *res= _operando1->clonarBignum();
     if(this->good() )    
     {
         if( _operacion == SUMAR)
-            *res = *_operando1 + *_operando2;
+            *res +=  *_operando2;
     
         else if( _operacion == RESTAR)
-            *res = *_operando1 - *_operando2;
+            *res -=  *_operando2;
     
         else  if( _operacion == MULTIPLICAR)
-            *res = *_operando1 * *_operando2;
+            *res *= *_operando2;
         this->_estado = res->estado();
     }
     else
@@ -67,7 +69,7 @@ bignumBase &calculadora::resultado()
         res->set_estado(NOK);
     }
     // -------------------------------------------< POSIBLE FUGA MEMORIA>
-    return *res;
+    return res;
 }
 
 calculadora &calculadora::operator=(const string &linea)
@@ -123,6 +125,7 @@ istream& operator>>(std::istream &is ,calculadora &entrada)
  int main()
  {
      bignumMult op1(20), op2(20);
+     bignumBase *res;
      calculadora operacion(&op1, &op2, 20);
      string linea;
 
@@ -131,8 +134,11 @@ istream& operator>>(std::istream &is ,calculadora &entrada)
          cout << "Ingrese la cuenta: " << '\n';
          getline(cin,linea);
          operacion = linea;
-         cout << operacion.resultado() << '\n';
+         res = operacion.resultado();
+         cout << *res<< '\n';
          cout << (int )operacion.estado() << '\n';
+         delete res;
+         
 
      }
 

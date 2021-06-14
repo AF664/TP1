@@ -44,10 +44,10 @@ class bignumBase
 
     public:
         bignumBase();
-        bignumBase(unsigned precision);
+        bignumBase(size_t precision);
         bignumBase(const bignumBase &original);
         bignumBase(const string &linea, size_t precision);
-        ~bignumBase();
+        virtual ~bignumBase();
         
         // constructores virtuales para poder aprovechas el código
         // en común de las dos clases bignum 
@@ -82,12 +82,13 @@ class bignumBase
         bignumBase &operator=(const string &linea) ;
         bignumBase &operator=(int numero);
         bignumBase &operator+=(const bignumBase &sumando);
+        bignumBase &operator-=(const bignumBase &sustraendo);
         bignumBase &operator*=(int numero);
-        friend bignumBase &operator+(const bignumBase &sumando1, const bignumBase &sumando2 );
-        friend bignumBase &operator-(const bignumBase &minuendo, const bignumBase &sustraendo);
-        virtual bignumBase &operator*(const bignumBase &factor1) = 0;
-        friend bignumBase &operator*(const bignumBase &factor,int mult);
-        friend bignumBase &operator/(const bignumBase &dividendo, const bignumBase &divisor);
+        
+       
+        virtual bignumBase &operator*=(const bignumBase &factor1) = 0;
+        
+     
         friend std::ostream& operator<<(std::ostream& ,const bignumBase&);
         friend std::istream& operator>>(std::istream& ,bignumBase &num);
 };

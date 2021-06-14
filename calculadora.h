@@ -37,7 +37,7 @@ class calculadora
         bool good();
         
 
-        bignumBase &resultado();
+        bignumBase *resultado();
 
         calculadora &operator=(const string &linea);
     
