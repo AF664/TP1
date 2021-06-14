@@ -51,14 +51,17 @@ static fstream ofs;
 
 int main(int argc,char *const argv[])
 {  
+	string linea;
+
     cmdline comandos(config);
     comandos.parse(argc, argv);
-    calculadora cuenta(precision);
 	status_t estado_aplicacion = OK;
 
-    while( (*iss >> cuenta) ) 
+	calculadora cuenta("-((121+1177)*(2+3))");
+	estado_aplicacion = cuenta.estado();
+    /*while(getline(*iss, linea)) 
     {
-        *oss << cuenta.resultado() << '\n';
+        calculadora cuenta(linea);
 		if( !cuenta.good())
 		{
 			error_msj(cuenta.estado());
@@ -66,7 +69,7 @@ int main(int argc,char *const argv[])
 		}
 
 		
-    }
+    }*/
     return estado_aplicacion;
 }
 

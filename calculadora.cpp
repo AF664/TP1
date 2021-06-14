@@ -1,35 +1,35 @@
 // archivo calculadora.cpp
+#include <algorithm>
+#include <string>
+#include <iostream>
+#include <cstdlib>
 
 #include "calculadora.h"
 
 using namespace std ;
 
-char DiccionarioOperaciones[]= {'+','-','*','\0'};
+char DiccionarioOperaciones[]= {'+','-','*','(', ')', 'n', 'p' , '\0'};
 
-calculadora::calculadora(unsigned precision =0 )
+calculadora::calculadora(const string &scuenta)
 {   
-    
-    _operando1 = bignum(precision);
-    _operando2 = bignum(precision);
-    _estado = OK ;
-    _operacion = NO_OP;
+    string str;
+
+    str = removeSpaces(scuenta);
+    if(crearColaRPN(str, _cuenta) == OK)
+        _estado = OK ;
+    else
+        _estado = NOK;
+    cout<<_cuenta<<endl;
 }
 
 calculadora::calculadora()
 {
-    _operando1 = bignum(0);
-    _operando2 = bignum(0);
      _estado = OK ;
-    _operacion = NO_OP;
 }
 
 calculadora::~calculadora()
-{}
-
-
-void calculadora::set_operacion(operacion_t op)
 {
-    _operacion=op;
+
 }
 
 status_t calculadora::estado()
@@ -44,8 +44,8 @@ bool calculadora::good()
 
 bignum calculadora::resultado()
 {
-    bignum res;
-    if(this->good() )    
+    bignum res("11", 10);
+    /*if(this->good() )    
     {
         if( _operacion == SUMAR)
             res = _operando1 + _operando2;
@@ -61,13 +61,13 @@ bignum calculadora::resultado()
     {
         this->_estado = NOK;
         res.set_estado(NOK);
-    }
+    }*/
     return res;
 }
 
 calculadora &calculadora::operator=(const string &linea)
 {
-    unsigned i; // iterador
+    /*unsigned i; // iterador
     
     size_t num1 ;
     size_t op ;
@@ -92,7 +92,7 @@ calculadora &calculadora::operator=(const string &linea)
 
         _estado = (_operando1.good() && _operando2.good()) ? OK : NOK;
         _operacion = ( i < NO_OP) ? ( operacion_t )i : NO_OP;
-    }
+    }*/
 
     return *this;
 
@@ -100,7 +100,7 @@ calculadora &calculadora::operator=(const string &linea)
 
 istream& operator>>(std::istream &is ,calculadora &entrada)
 {
-    string linea;
+/*    string linea;
     getline(is,linea );
     if( !is.good())
     {
@@ -108,12 +108,12 @@ istream& operator>>(std::istream &is ,calculadora &entrada)
         return is;
     }
     entrada = linea;
-   
+*/   
     return is;
 
 }
 
-#ifdef _TEST_CALCULADORA
+/*#ifdef _TEST_CALCULADORA
  
  int main()
  {
@@ -130,6 +130,135 @@ istream& operator>>(std::istream &is ,calculadora &entrada)
 
      }
 
- }
+ }*/
 
- #endif
+
+status_t calculadora::crearColaRPN(const string &linea, queue <string> &salida)
+{
+    stack <string> pila;
+    size_t pos1, pos2, l;
+    string str1, str2;
+
+    pos1 = 0;
+    pos2 = 0;
+    l = linea.length();
+
+    //Si el primer caracter es un menos o más es operador unario
+    if(linea[0] == '+')
+    {
+        pila.push("p");
+        pos1++;
+        pos2++;
+    }
+    else if(linea[0] == '-')
+    {
+        pila.push("n");
+        pos1++;
+        pos2++;
+    }
+
+    while(pos1 != l)
+    {
+
+        if((pos2 = linea.find_first_of(DiccionarioOperaciones, pos1)) == string::npos)
+            pos2 = l;
+
+        //Si es un número
+        if(pos1 != pos2)
+        {
+            str1 = linea.substr(pos1, pos2 - pos1);
+            salida.push(str1);
+        }
+        //Si es alguno de los operadores
+        else
+        {
+            str1 = linea.substr(pos2, 1);
+            
+            //Si es un paréntesis cerrado
+            if(str1[0] == ')')
+            {
+                //Saco de la pila y mando a salida hasta el (, el cual es descartado
+                while (pila.length())
+                {
+                    str1 = pila.pull();
+                    if(str1[0] != '(')
+                        salida.push(str1);
+                    else 
+                        break;
+                }
+                //Si no se encuentra el otro paréntesis es un error
+                if(str1[0] != '(')
+                    return NOK;
+            }
+            
+            //En caso de que sea cualquier otro operador
+            else
+            {
+                //(
+                if(str1[0] == '(')
+                    pila.push(str1);
+
+                //+, -, / o *            
+                else
+                {
+                    while(pila.length())
+                    {
+                        str2 = pila.pull();
+                        if(checkPrecedence(str1[0], str2[0]) == true)
+                        {
+                            pila.push(str2);
+                            break;
+                        }
+                        salida.push(str2);
+                    }
+                    pila.push(str1);
+                }
+
+                //Si hay operadores unarios
+                if(linea[pos2 + 1] == '+')
+                {
+                    pila.push("p");
+                    pos1++;
+                    pos2++;
+                }
+                else if(linea[pos2 + 1] == '-')
+                {
+                    pila.push("n");
+                    pos1++;
+                    pos2++;
+                }
+            }
+        }
+        if(pos1 == pos2)
+            pos1++;
+        else
+            pos1 = pos2;
+    }
+    //Lo que quedó en la pila lo mando a la salida
+    while(pila.length())
+        salida.push(pila.pull());
+
+    return OK;
+}
+
+bool calculadora::checkPrecedence(const char &c1, const char &c2)
+{
+    if(c1 == '*' && c2 == '+')
+        return true;
+    if(c1 == '*' && c2 == '-')
+        return true;
+    if(c1 == '/' && c2 == '+')
+        return true;
+    if(c1 == '/' && c2 == '-')
+        return true;
+    if(c2 == '(')
+        return true;
+    return false;
+}
+
+string calculadora::removeSpaces(string str)
+{
+	str.erase(remove(str.begin(), str.end(), ' '), str.end());
+    str.erase(remove(str.begin(), str.end(), '\t'), str.end());
+	return str;
+}

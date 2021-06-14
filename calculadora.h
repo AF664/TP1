@@ -3,6 +3,8 @@
 
 #include "bignum.h"
 #include "_error.h"
+#include "queue.h"
+#include "stack.h"
 #include <iostream>
 #include <string>
 
@@ -17,20 +19,20 @@ typedef enum operacion {
 class calculadora
 {
     private:
-        bignum _operando1;
-        bignum _operando2;
+        queue <string> _cuenta;
         status_t _estado;
-      
-        operacion_t _operacion;
+
+        status_t crearColaRPN(const string &, queue <string> &);
+        bool checkPrecedence(const char &, const char &);
+        //Remueve espacios
+        string removeSpaces(string);
 
     public:
 
         calculadora();    
-        calculadora(bignum &op1, bignum &op2, unsigned precision);
-        calculadora(unsigned precision );
+        calculadora(const string &);
         ~calculadora();
 
-        void set_operacion(operacion_t op);
         status_t estado();
         bool good();
         

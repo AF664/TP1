@@ -1,5 +1,11 @@
 // utils.cpp
 
+#include <cstdlib>
+#include <cctype>
+#include <algorithm>
+#include <string>
+#include <iostream>
+
 #include "utils.h"
 
 
@@ -57,4 +63,10 @@ size_t stringDigits(string &s)
             s.erase();
 
     return s.length();
+}
+
+string removeSpaces(string str)
+{
+	str.erase(remove(str.begin(), str.end(), ' '), str.end());
+	return str;
 }
