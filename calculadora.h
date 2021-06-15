@@ -12,6 +12,7 @@ typedef enum operacion {
     SUMAR,
     RESTAR,
     MULTIPLICAR,
+    DIVIDIR,
     NO_OP
 } operacion_t;
 

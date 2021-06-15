@@ -4,7 +4,7 @@
 
 using namespace std ;
 
-char DiccionarioOperaciones[]= {'+','-','*','\0'};
+char DiccionarioOperaciones[]= {'+','-','*','/','\0'};
 
 
 calculadora::calculadora()
@@ -61,7 +61,12 @@ bignumBase *calculadora::resultado()
     
         else  if( _operacion == MULTIPLICAR)
             *res *= *_operando2;
+
+        else if( _operacion == DIVIDIR)
+            *res /= *_operando2;
+            
         this->_estado = res->estado();
+        
     }
     else
     {

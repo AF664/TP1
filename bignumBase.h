@@ -71,6 +71,8 @@ class bignumBase
         // de estado en ERROR_OVERFLOW. 
         bignumBase &_desplazamiento_izq(unsigned shift);
 
+        bignumBase &_desplazamiento_der(unsigned shift);
+
         // Cuenta los digitos no nulos desde la derecha a la izquierda
         void _actualizar_largo();
 
@@ -81,9 +83,21 @@ class bignumBase
         bignumBase &operator=(const bignumBase &original);
         bignumBase &operator=(const string &linea) ;
         bignumBase &operator=(int numero);
+        bignumBase &operator+=(int numero);
         bignumBase &operator+=(const bignumBase &sumando);
         bignumBase &operator-=(const bignumBase &sustraendo);
         bignumBase &operator*=(int numero);
+        bignumBase &operator/=(const bignumBase &divisor);
+        bignumBase &operator++(int); // operador prefijo
+
+        friend bool operator<(bignumBase const &a, bignumBase const &b);
+        friend bool operator>(bignumBase const &a, bignumBase const &b);
+        friend bool operator==(bignumBase const &a, bignumBase const &b);
+        friend bool operator<=(bignumBase const &a, bignumBase const &b);
+        friend bool operator>=(bignumBase const &a, bignumBase const &b);
+
+    
+
         
        
         virtual bignumBase &operator*=(const bignumBase &factor1) = 0;
