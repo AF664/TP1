@@ -54,7 +54,7 @@ bignumBase *calculadora::resultado()
     if(this->good() )    
     {
         if( _operacion == SUMAR)
-            *res +=  *_operando2;
+            *res += *_operando2 ;
     
         else if( _operacion == RESTAR)
             *res -=  *_operando2;
@@ -64,7 +64,7 @@ bignumBase *calculadora::resultado()
 
         else if( _operacion == DIVIDIR)
             *res /= *_operando2;
-            
+
         this->_estado = res->estado();
         
     }
@@ -129,7 +129,7 @@ istream& operator>>(std::istream &is ,calculadora &entrada)
  
  int main()
  {
-     bignumMult op1(20), op2(20);
+     bignumKarat op1(20), op2(20);
      bignumBase *res;
      calculadora operacion(&op1, &op2, 20);
      string linea;

@@ -27,22 +27,26 @@ bignumBase &bignumMult::operator*=(const bignumBase &f1)
     size_t i; // iterador
 
     if( largo() == 0 ||  f1.largo() == 0)
-        return *this;
-    
-    for(i=0; i < largo() && mult.good() ; i++ )
-    {
-        *aux = f1;
-        *aux *= digito(i);
-        aux->_desplazamiento_izq(i);
-        mult += *aux;
-    }
-    if( f1.signo() == NEGATIVO)
-        mult.set_signo( (signo() == NEGATIVO) ? POSITIVO : NEGATIVO );
-    else
-        mult.set_signo( (signo() == NEGATIVO ) ? NEGATIVO : POSITIVO);
+        this->_poner_a_cero();
 
-    *this = mult;
-    _actualizar_largo();
+    else{
+        mult._poner_a_cero();
+        for(i=0; i < largo() && mult.good() ; i++ )
+        {
+            *aux = f1;
+            *aux *= digito(i);
+            aux->_desplazamiento_izq(i);
+            mult += *aux;
+        }
+        if( f1.signo() == NEGATIVO)
+            mult.set_signo( (signo() == NEGATIVO) ? POSITIVO : NEGATIVO );
+        else
+            mult.set_signo( (signo() == NEGATIVO ) ? NEGATIVO : POSITIVO);
+
+        *this = mult;
+        _actualizar_largo();
+    }
+
     delete aux;
 
     return *this;

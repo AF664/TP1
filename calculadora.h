@@ -3,6 +3,7 @@
 
 #include "bignumBase.h"
 #include "bignumMult.h"
+#include "bignumKarat.h"
 #include "_error.h"
 #include "utils.h"
 #include <iostream>

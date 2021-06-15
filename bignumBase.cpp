@@ -283,7 +283,6 @@ bignumBase &bignumBase::operator+=(const bignumBase &sumando1)
     // se hace el clonado porque no se puede instanciar la clase
     // bingumBase, ya que es abstracta.  
     bignumBase *s1 = sumando1.clonarBignum();
-
     int carry; 
     int signo = _signo + s1->_signo;
     if( !good() || !s1->good())
@@ -293,23 +292,33 @@ bignumBase &bignumBase::operator+=(const bignumBase &sumando1)
         return *this;
     }
 
+    if(_precision < s1->_precision)
+        _cambiar_precision(s1->_precision);
+    else if( _precision > s1->_precision)
+        s1->_cambiar_precision(_precision);
+
     if( _signo == NEGATIVO)
         _complemento_base_10();
     if( s1->_signo == NEGATIVO)
         s1->_complemento_base_10();
-    
     this->_suma_sin_signo( *s1 , carry );
-
-    signo -= carry ;
-    if (signo < 0)
-        set_estado(ERROR_OVERFLOW);
-    else if ( signo == 1)
+    carry -= signo ;
+    
+    if ( carry == -1 || signo == 2)
     {  
         _signo = NEGATIVO;
         _complemento_base_10();
+        _actualizar_largo();
     }
     else    
         _signo = POSITIVO;
+    
+    if (carry > 0)
+    {        
+        _actualizar_largo();
+        _digitos[_largo]=1;
+    }
+
     _actualizar_largo();
     
     delete s1;  
@@ -386,10 +395,16 @@ bignumBase &bignumBase::_desplazamiento_der(unsigned shift)
             _digitos[i++]=0;
         _actualizar_largo();
     }
-   
-    
     return *this;
-    
+}
+
+bignumBase &bignumBase::_mascara_der(unsigned digit)
+{
+    for(; digit < _largo; digit ++)
+        _digitos[digit]=0;
+
+    _actualizar_largo();
+    return *this;
 }
 
 bignumBase &bignumBase::_cambiar_precision(size_t precision)
@@ -418,14 +433,13 @@ bignumBase &bignumBase::operator*=(int numero)
     unsigned i;
     bignumBase *acumulador = clonarBignum();
     bignumBase *aux = clonarBignum();
-    
     if( numero < 0)
     {
         _signo = (_signo == POSITIVO)? NEGATIVO : POSITIVO;
         numero *= -1;
     }
     acumulador->_poner_a_cero();
-    for(i=0 ; i < _largo ; i++)
+    for(i=0 ; i < _largo  ; i++)
     {
         *aux = _digitos[i] * numero;
         *acumulador += aux->_desplazamiento_izq(i);
