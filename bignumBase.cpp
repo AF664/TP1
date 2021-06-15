@@ -356,22 +356,40 @@ bignumBase &bignumBase::_poner_a_cero()
 bignumBase &bignumBase::_desplazamiento_izq(unsigned shift)
 {
     unsigned i,j;
+
+    if( shift + _largo > _precision )
+        _cambiar_precision( shift + _largo);
     
-    if( shift >= _precision)
-    {
-        this->set_estado(ERROR_OVERFLOW);
-        return *this;
-    }
     for(i= _precision , j =_precision - shift ;  j > 0 ; )
         _digitos[--i] = _digitos[--j];
 
     while ( i > 0)
         _digitos[--i]=0;
    
-    this->set_estado( (shift > (_precision - _largo))? ERROR_OVERFLOW : OK );
-    this->_actualizar_largo();
+    _actualizar_largo();
+    
     return *this; 
 
+}
+
+bignumBase &bignumBase::_desplazamiento_der(unsigned shift)
+{
+    unsigned i;
+   
+    if( shift > _largo )
+        this->_poner_a_cero();
+    
+    else{
+        for( i=0 ; shift < _largo ;)
+            _digitos[i++] = _digitos[shift++];
+        while(i< _largo)
+            _digitos[i++]=0;
+        _actualizar_largo();
+    }
+   
+    
+    return *this;
+    
 }
 
 bignumBase &bignumBase::_cambiar_precision(size_t precision)
@@ -422,28 +440,44 @@ bignumBase &bignumBase::operator*=(int numero)
     return *this;
 }
 
-bignumBase &bignumBase::operator/=(const bignumBase &divisor)
+bignumBase &bignumBase::operator/=(const bignumBase &div)
 {
-    bignumBase *aux = this->clonarBignum();
-    signo_t signo_resultado  = ( signo() == divisor.signo() )? POSITIVO : NEGATIVO;
+    int i;
+    bignumBase *resultado = this->clonarBignum();
+    bignumBase *divisor = div.clonarBignum();
+    
+
+    signo_t signo_resultado  = ( signo() == div.signo() )? POSITIVO : NEGATIVO;
 
   
-    set_signo( divisor.signo());
+    set_signo( POSITIVO);
+    divisor->set_signo(POSITIVO);
 
-    if( *this < divisor)
-        *this = 0;
+    if( *this < *divisor)
+        this->_poner_a_cero();
     else 
     {
-        aux->_poner_a_cero();
-        while( *this >= divisor )
+        resultado->_poner_a_cero();
+        
+        i = largo()- div.largo();
+        resultado->_largo= i+1;
+        for( divisor->_desplazamiento_izq(i) ; i>= 0 && !cero(); i--)
         {
-            *this -= divisor;
-            (*aux)++;
+            while(*divisor <= *this && !cero() )   
+            {
+                (resultado->_digitos[i])++ ;
+                *this -= *divisor;
+            }
+            
+            divisor->_desplazamiento_der(1);
         }
-    }
-    aux->set_signo(signo_resultado);
-    *this = *aux;
-    delete aux;
+        *this = *resultado;
+        set_signo(signo_resultado);
+        _actualizar_largo();
+    }    
+    delete resultado;
+    delete divisor;
+    
     return *this;
     
 }
@@ -466,7 +500,7 @@ bool operator<(bignumBase const &a, bignumBase const &b)
     bignumBase *aux = a.clonarBignum();
     *aux -=b;
     
-    resultado = (aux->signo() == NEGATIVO)? true : false;
+    resultado = (aux->signo() == NEGATIVO) ;
     delete aux;
     return resultado;
 }
@@ -476,6 +510,7 @@ bool operator>(bignumBase const &a, bignumBase const &b)
     bool resultado;
     bignumBase *aux = a.clonarBignum();
     *aux -=b;
+    // puede ser cero y el signo estar en positivo
     resultado = (aux->signo() == NEGATIVO)? false : true;
     delete aux;
     return resultado;
@@ -493,11 +528,25 @@ bool operator==(bignumBase const &a, bignumBase const &b)
 
 bool operator<=(bignumBase const &a, bignumBase const &b)
 {
-    return (a < b || a == b);
+    bool resultado;
+    bignumBase *aux = a.clonarBignum();
+    *aux -=b;
+    resultado = (aux->signo() == NEGATIVO) || aux->cero();
+    delete aux;
+    return resultado;
+   
+    return (a >b || a == b);
 }
 
 bool operator>=(bignumBase const &a, bignumBase const &b)
 {
+    bool resultado;
+    bignumBase *aux = a.clonarBignum();
+    *aux -=b;
+    resultado = (aux->signo() == POSITIVO) || aux->cero();
+    delete aux;
+    return resultado;
+   
     return (a >b || a == b);
 }
 
