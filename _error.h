@@ -5,14 +5,14 @@
 
 #include <iostream>
 
-#define _CNT_MSJ_ERROR 6
+#define _CNT_MSJ_ERROR 7
 #define _MSJ_OK ""
 #define _MSJ_NOK "Se encontraron errores en el proceso\n"
 #define _MSJ_ERROR_DIGITOS "Error, entrada no reconocida\n"
 #define _MSJ_ERROR_PRECISION "Error, precision no adecuada\n"
 #define _MSJ_ERROR_OVERFLOW "Error, operacion sobrepaso la precision\n"
 #define _MSJ_ERROR_ENTRADA "Error, no se pudo leer la entrada\n"
-
+#define _MSJ_ERROR_DIVISION "El dividendo es nulo\n"
 
 typedef enum status{
     OK,
@@ -20,8 +20,8 @@ typedef enum status{
     ERROR_DIGITOS,
     ERROR_PRECISION,
     ERROR_OVERFLOW,
-    ERROR_ENTRADA
-
+    ERROR_ENTRADA,
+    ERROR_DIVISION
 } status_t;
 
 void error_msj(status_t codigo);
