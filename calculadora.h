@@ -8,10 +8,14 @@
 #include <iostream>
 #include <string>
 
+bool is_digits(const std::string &str);
+bool is_operation(const std::string &str);
+
 typedef enum operacion {
     SUMAR,
     RESTAR,
     MULTIPLICAR,
+    DIVISION,
     NO_OP
 } operacion_t;
 
@@ -26,7 +30,9 @@ class calculadora
         bool checkPrecedence(const char &, const char &);
         //Remueve espacios
         string removeSpaces(string);
-
+        bignum _operando1;
+        bignum _operando2;
+        operacion_t _operacion;
     public:
 
         calculadora();    
@@ -36,7 +42,7 @@ class calculadora
         status_t estado();
         bool good();
         
-
+        void ordenar_stack();
         bignum resultado();
 
         calculadora &operator=(const string &linea);
