@@ -6,10 +6,10 @@ SHELL := /bin/bash
 all: main
 	
 
-main: main.o cmdline.o bignum.o calculadora.o utils.o _error.o
-	$(CXX) $(CXXFLAGS) -o main bignum.o calculadora.o cmdline.o main.o utils.o _error.o 
+main: main.o cmdline.o bignumBase.o bignumMult.o bignumKarat.o calculadora.o utils.o _error.o
+	$(CXX) $(CXXFLAGS) -o main bignumBase.o bignumMult.o bignumKarat.o calculadora.o cmdline.o main.o utils.o _error.o 
 
-main.o: main.cpp cmdline.h calculadora.h bignum.h utils.h _error.h
+main.o: main.cpp cmdline.h calculadora.h bignumBase.h bignumMult.h bignumKarat.h utils.h _error.h
 	$(CXX) $(CXXFLAGS) -c main.cpp
 
 cmdline.o: cmdline.cc cmdline.h
@@ -18,8 +18,14 @@ cmdline.o: cmdline.cc cmdline.h
 calculadora.o: calculadora.cpp calculadora.h 
 	$(CXX) $(CXXFLAGS) -c calculadora.cpp
 
-bignum.o: bignum.cpp bignum.h
-	$(CXX) $(CXXFLAGS) -c bignum.cpp
+bignumBase.o: bignumBase.cpp bignumBase.h bignumMult.h bignumKarat.h
+	$(CXX) $(CXXFLAGS) -c bignumBase.cpp
+
+bignumMult.o: bignumMult.cpp bignumBase.h bignumMult.h bignumKarat.h
+	$(CXX) $(CXXFLAGS) -c bignumMult.cpp
+
+bignumKarat.o: bignumKarat.cpp bignumBase.h bignumMult.h bignumKarat.h
+	$(CXX) $(CXXFLAGS) -c bignumKarat.cpp
 
 utils.o: utils.cpp utils.h
 	$(CXX) $(CXXFLAGS) -c utils.cpp

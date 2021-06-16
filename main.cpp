@@ -59,7 +59,7 @@ int main(int argc,char *const argv[])
 {  
     cmdline comandos(config);
     comandos.parse(argc, argv);
-    calculadora cuenta(precision);
+    calculadora cuenta;
 	status_t estado_aplicacion = OK;
 
     while( (*iss >> cuenta) ) 
