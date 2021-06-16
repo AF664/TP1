@@ -150,3 +150,4 @@ istream& operator>>(std::istream &is ,calculadora &entrada)
  }
 
  #endif
+ 
