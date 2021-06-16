@@ -9,6 +9,7 @@
 using namespace std ;
 
 char DiccionarioOperaciones[]= {'+','-','*','(', ')', 'n', 'p' , '\0'};
+string DiccionarioOp[]= {"+","-","*", "/"};
 
 calculadora::calculadora(const string &scuenta)
 {   
@@ -42,28 +43,90 @@ bool calculadora::good()
     return (_estado == OK ? true : false );
 }
 
+// ordenar stack agrupa los numeros con sus signos 121 n --> -121
+void calculadora::ordenar_stack(){
+    string ant;
+    string actual;
+    stack <string> nueva;
+    stack <string> aux;
+
+    actual = _cuenta.pull();
+    nueva.push(actual);
+    while(_cuenta.length()){
+        ant = actual;
+        actual = _cuenta.pull();
+        nueva.push(actual);
+        if(actual == "n" && is_digits(ant)){
+            ant = nueva.pull();
+            actual = nueva.pull().insert(0,"-");
+            nueva.push(actual);
+        }
+    }
+    while(nueva.length())aux.push(nueva.pull());
+    while(aux.length())_cuenta.push(aux.pull());
+}
+
 bignum calculadora::resultado()
 {
-    bignum res("11", 10);
-    /*if(this->good() )    
-    {
-        if( _operacion == SUMAR)
-            res = _operando1 + _operando2;
+    stack <string> aux;     
+    bool estado = false;
+    size_t cantidad_num;
+    string str;
     
-        else if( _operacion == RESTAR)
-            res = _operando1 - _operando2;
-    
-        else  if( _operacion == MULTIPLICAR)
-            res = _operando1 * _operando2;
-        this->_estado = res.estado();
+    if(this->good()){
+        while (_cuenta.length() > 2){
+            ordenar_stack();
+            // Buscamos en la pila la operacion y los numeros
+            estado = false;
+            cantidad_num = 0;
+            while((!_cuenta.empty())){
+                str = _cuenta.pull();
+                aux.push(str);
+                if(is_digits(str))cantidad_num++;
+                if(cantidad_num >= 2 && is_operation(str)){
+                    estado = true;
+                    break;
+                } 
+            }
+            if(estado){
+                cout << "Operacion" << endl;
+                size_t i;
+                bignum res;
+                stack<string> aux2;
+                string op = aux.pull();
+                string num1, num2, resul = "0";
+                for( i=0 ; i< NO_OP && op.find(DiccionarioOp[i]) == std::string::npos ; i++);
+                _operacion = ( i < NO_OP) ? ( operacion_t )i : NO_OP;
+                num2 = aux.pull();
+                num1 = aux.pull();
+                cout << num1 << op << num2 << endl;
+                // Guardo en _cuenta, el resultado en el lugar de num1, num2, op
+                aux.push(resul);
+                while (_cuenta.length())aux.push(_cuenta.pull());
+                while (aux.length())aux2.push(aux.pull());
+                while (aux2.length())_cuenta.push(aux2.pull());
+		   // Aca se hacen las cuentas
+                //if( _operacion == SUMAR)res = _operando1 + _operando2;
+                //else if( _operacion == RESTAR) res = _operando1 - _operando2;
+                //else  if( _operacion == MULTIPLICAR) res = _operando1 * _operando2;
+                //else  if( _operacion == DIVISION) res = _operando1 / _operando2;
+            }
+        }
+        // Las operaciones restantes son unitarias (solo quedan 2 elementos)
+        string val1, val2;
+        val1 = _cuenta.pull();
+        val2 = _cuenta.pull();
+        val1 = val2 == "p" ? val1 : val1 = is_operation(val1) ? val1.erase(0,1) : val1.insert(0,"-");
+        _cuenta.push(val1);  
     }
-    else
-    {
-        this->_estado = NOK;
-        res.set_estado(NOK);
-    }*/
+    // retorno el unico elemento que queda en _cuenta
+    cout << _cuenta << endl;
+    str = _cuenta.pull();
+    bignum res;     // falta inicializarlo con el str
     return res;
 }
+
+
 
 calculadora &calculadora::operator=(const string &linea)
 {
@@ -261,4 +324,17 @@ string calculadora::removeSpaces(string str)
 	str.erase(remove(str.begin(), str.end(), ' '), str.end());
     str.erase(remove(str.begin(), str.end(), '\t'), str.end());
 	return str;
+}
+
+
+
+// Tomo numeros con signo
+bool is_digits(const std::string &str)
+{
+    return str.find_first_not_of("-0123456789") == std::string::npos;
+}
+
+bool is_operation(const std::string &str)
+{
+    return str.find_first_not_of("-+*/") == std::string::npos;
 }
