@@ -91,6 +91,7 @@ bignumBase *calculadora::resultado(bignumBase *operando1, bignumBase *operando2)
             {
                 *operando1 = soperando1;
                 *operando2 = soperando2;
+                cout<<"operación: "<<*operando1<<" "<<sop<<*operando2<<endl;
                 res = resolve_binary(operando1, operando2, sop);
                 pila.push(res->bignum_to_string());
             }
@@ -108,6 +109,7 @@ bignumBase *calculadora::resultado(bignumBase *operando1, bignumBase *operando2)
             else
             {
                 *operando1 = soperando1;
+                cout<<"operación: "<<sop<<*operando1<<endl;
                 res = resolve_unary(operando1, sop);
                 pila.push(res->bignum_to_string());
             }
@@ -174,9 +176,9 @@ status_t calculadora::crearColaRPN(const string &linea, queue <string> &salida)
         //Si es un número
         if(pos1 != pos2)
         {
+            str1 = linea.substr(pos1, pos2 - pos1);
             if(str1.find_first_not_of("0123456789") != string::npos)
                 return ERROR_ENTRADA;
-            str1 = linea.substr(pos1, pos2 - pos1);
             salida.push(str1);
         }
         //Si es alguno de los operadores
@@ -247,6 +249,7 @@ status_t calculadora::crearColaRPN(const string &linea, queue <string> &salida)
     //Lo que quedó en la pila lo mando a la salida
     while(pila.length())
         salida.push(pila.pull());
+    cout<<salida<<endl;
     return OK;
 }
 

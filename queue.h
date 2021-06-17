@@ -130,12 +130,9 @@ size_t queue<T>::length() const
 template <class TT>
 ostream & operator<<(ostream &os, queue <TT> &cola)
 {
-	TT aux;
-	while (cola.length())
-	{
-		aux = cola.pull();
-		os<<aux<<" ";
-	}
+	queue <TT> aux(cola);
+	while (aux.length())
+		os<<aux.pull()<<" ";
 	return os;
 }
 

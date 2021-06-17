@@ -59,13 +59,15 @@ int main(int argc,char *const argv[])
     comandos.parse(argc, argv);
     calculadora cuenta;
 	status_t estado_aplicacion = OK;
+	bignumBase *res;
 	
 	if(multiplication == CLASSIC)
 	{
     	while( (*iss>>cuenta) ) 
     	{
-			bignumMult operando1(1000), operando2(1000);
-        	*oss << *(cuenta.resultado(&operando1, &operando2))<<endl;
+			bignumMult operando1, operando2;
+			res = cuenta.resultado(&operando1, &operando2);
+        	*oss << *res<<endl;
 			if( !cuenta.good())
 			{
 				error_msj(cuenta.estado());
@@ -77,7 +79,7 @@ int main(int argc,char *const argv[])
 	{		
 		while( (*iss>>cuenta) ) 
     	{
-			bignumKarat operando1(100), operando2(100);
+			bignumKarat operando1, operando2;
         	*oss<<*(cuenta.resultado(&operando1, &operando2))<<endl;
 			if( !cuenta.good())
 			{

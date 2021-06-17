@@ -158,34 +158,24 @@ bignumBase &bignumBase::operator=(const bignumBase &original)
 bignumBase &bignumBase::operator=(const string &linea)
 {
     string aux(linea);
-    size_t longitud = stringDigits(aux);      
+    size_t longitud = stringDigits(aux);  
+    longitud--;    
  
     if( !(longitud) )   
     {
         this->_poner_a_cero();
         this->set_estado(ERROR_DIGITOS);  // Corrección de problema con identificación de 
     }                                     // números mal conformados.
-    
-    else if(  --longitud > _precision )
-        this->set_estado(ERROR_PRECISION) ;
-        
-
-    else {
-        this->set_estado(OK); 
-        _signo = ( aux[0] == '+')? POSITIVO : NEGATIVO;
-        _largo = longitud  ;
-        for(int i=longitud, j =0 ; i>0 ; --i , ++j)
-            _digitos[j]= aux[i] -'0' ;                       
-       
-        for( unsigned i=longitud; i< _precision ; i++)
-            _digitos[i]= 0;
-        this->_actualizar_largo();
-        
-        // corrijo el signo si la entrada fue -0
-        if(this->cero())
-            _signo= POSITIVO ;
-        }
-
+    _precision = longitud; 
+    _digitos = this->_crear_digitos(_precision);
+    _signo = ( aux[0] == '+')? POSITIVO : NEGATIVO;
+    _largo = longitud;
+    for(int i=longitud, j =0 ; i>0 ; --i , ++j)
+        _digitos[j]= aux[i] -'0' ;                           
+    // corrijo el signo si la entrada fue -0
+    if(this->cero())
+        _signo= POSITIVO ;
+    this->set_estado(OK);
     return *this; 
 
 }
@@ -284,6 +274,8 @@ bignumBase &bignumBase::operator+=(const bignumBase &sumando1)
     // se hace el clonado porque no se puede instanciar la clase
     // bingumBase, ya que es abstracta.  
     bignumBase *s1 = sumando1.clonarBignum();
+    cout<<"op1:"<<*s1<<endl;
+    cout<<"op2:"<<*this<<endl;
     int carry; 
     int signo = _signo + s1->_signo;
     if( !good() || !s1->good())
