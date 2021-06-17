@@ -3,11 +3,11 @@ CXXFLAGS = -I. $(CXXARGS) -g
 ERROR =1
 SHELL := /bin/bash
 
-all: main
+all: tp1
 	
 
-main: main.o cmdline.o bignumBase.o bignumMult.o bignumKarat.o calculadora2.o utils.o _error.o
-	$(CXX) $(CXXFLAGS) -o main bignumBase.o bignumMult.o bignumKarat.o calculadora2.o cmdline.o main.o utils.o _error.o 
+tp1: main.o cmdline.o bignumBase.o bignumMult.o bignumKarat.o calculadora2.o utils.o _error.o
+	$(CXX) $(CXXFLAGS) -o tp1 bignumBase.o bignumMult.o bignumKarat.o calculadora2.o cmdline.o main.o utils.o _error.o 
 
 main.o: main.cpp cmdline.h calculadora2.h bignumBase.h bignumMult.h bignumKarat.h utils.h _error.h
 	$(CXX) $(CXXFLAGS) -c main.cpp

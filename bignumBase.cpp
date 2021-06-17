@@ -250,7 +250,7 @@ bignumBase &bignumBase::_suma_sin_signo(bignumBase const &s2 , int &carry)
         }
     }
 
-    this->_actualizar_largo();
+//    this->_actualizar_largo();
     return *this;
 
 }
@@ -293,7 +293,7 @@ bignumBase &bignumBase::operator+=(const bignumBase &sumando1)
         _complemento_base_10();
     if( s1->_signo == NEGATIVO)
         s1->_complemento_base_10();
-    this->_suma_sin_signo( *s1 , carry );
+    this->_suma_sin_signo( *s1 , carry);
     carry -= signo ;
     
     if ( carry == -1 || signo == 2)
@@ -307,8 +307,9 @@ bignumBase &bignumBase::operator+=(const bignumBase &sumando1)
     
     if (carry > 0)
     {        
-        _actualizar_largo();
-        _digitos[_largo]=1;
+        _largo++;
+        _digitos[_largo - 1] = 1;
+        _cambiar_precision(_precision + 1);
     }
     
     _actualizar_largo();

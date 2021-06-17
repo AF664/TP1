@@ -43,7 +43,7 @@ calculadora &calculadora::operator=(const string &linea)
     string aux;
 
     aux = removeSpaces(linea);
-    _estado = crearColaRPN(linea, _cuenta);
+    _estado = crearColaRPN(aux, _cuenta);
     return *this;
 }
 
@@ -93,7 +93,6 @@ bignumBase *calculadora::resultado(bignumBase *operando1, bignumBase *operando2)
             {
                 *operando1 = soperando1;
                 *operando2 = soperando2;
-                cout<<"operación: "<<*operando1<<" "<<sop<<*operando2<<endl;
                 res = resolve_binary(operando1, operando2, sop);
                 pila.push(res->bignum_to_string());
             }
@@ -251,7 +250,6 @@ status_t calculadora::crearColaRPN(const string &linea, queue <string> &salida)
     //Lo que quedó en la pila lo mando a la salida
     while(pila.length())
         salida.push(pila.pull());
-    cout<<salida<<endl;
     return OK;
 }
 
