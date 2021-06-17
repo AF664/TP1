@@ -6,6 +6,19 @@
 
 #include "bignumBase.h"
 
+string bignumBase::digitos() const{
+    string str;
+    if(this->good()){
+        if(_signo == NEGATIVO) str = "-";
+        for(size_t i=_largo-1 ; i < _largo  ; --i)
+            str += ((char) (_digitos[i] + '0'));
+    }else{
+        str = "0";
+    }
+    cout << "Numero: " << str << endl;
+    return str;
+}
+
 
 unsigned short *bignumBase::_crear_digitos(unsigned precision)
 {
@@ -82,9 +95,20 @@ bignumBase::bignumBase(const bignumBase &original)
 }
 
 bignumBase::bignumBase(const string &linea, size_t precision)
-{    
+{      
      _digitos = _crear_digitos(precision);
      _precision = precision;
+
+     *this = linea;    
+
+}
+
+bignumBase::bignumBase(const string &linea)
+{   
+    string aux(linea);
+    size_t longitud = stringDigits(aux);     
+     _digitos = _crear_digitos(longitud);
+     _precision = longitud;
 
      *this = linea;    
 

@@ -55,25 +55,25 @@ static ostream *oss;
 static fstream ifs;
 static fstream ofs;
 
+
 int main(int argc,char *const argv[])
 {  
     cmdline comandos(config);
     comandos.parse(argc, argv);
-    calculadora cuenta;
 	status_t estado_aplicacion = OK;
+	calculadora cuenta;
 
     while( (*iss >> cuenta) ) 
     {
-        *oss << cuenta.resultado() << '\n';
+        *oss << *(cuenta.resultado()) << '\n';
 		if( !cuenta.good())
 		{
 			error_msj(cuenta.estado());
 			estado_aplicacion = NOK;
 		}
-
-		
     }
     return estado_aplicacion;
+
 }
 
 

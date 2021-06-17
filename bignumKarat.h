@@ -12,6 +12,7 @@ class bignumKarat : public bignumBase
     bignumKarat() : bignumBase() {};
     bignumKarat(size_t precision) : bignumBase(precision) {};
     bignumKarat(const bignumBase &original) : bignumBase(original) {};
+    bignumKarat(const string &linea) : bignumBase(linea) {};
     bignumKarat(const string &linea, size_t precision) : bignumBase(linea, precision) {};
     ~bignumKarat() override;
 

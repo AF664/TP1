@@ -8,6 +8,11 @@
 #include "utils.h"
 #include <iostream>
 #include <string>
+#include "queue.h"
+#include "stack.h"
+
+bool is_digits(const std::string &str);
+bool is_operation(const std::string &str);
 
 typedef enum operacion {
     SUMAR,
@@ -21,11 +26,16 @@ typedef enum operacion {
 class calculadora
 {
     private:
+        queue <string> _cuenta;
+        status_t _estado;
         bignumBase *_operando1;
         bignumBase *_operando2;
-        status_t _estado;
         operacion_t _operacion;
-   
+
+        status_t crearColaRPN(const string &, queue <string> &);
+        bool checkPrecedence(const char &, const char &);
+        //Remueve espacios
+        string removeSpaces(string);
 
     public:
 
@@ -38,11 +48,9 @@ class calculadora
         status_t estado();
         bool good();
         
-
+        void ordenar_stack();
         bignumBase *resultado();
-
-        calculadora &operator=(const string &linea);
-    
+        calculadora &operator=(const string &linea);    
         friend std::istream& operator>>(std::istream& ,calculadora &entrada);
 
 };

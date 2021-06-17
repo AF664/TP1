@@ -11,6 +11,7 @@ class bignumMult : public bignumBase
     bignumMult(size_t precision) : bignumBase(precision) {};
     bignumMult(const bignumBase &original) : bignumBase(original) {};
     bignumMult(const string &linea, size_t precision) : bignumBase(linea, precision) {};
+    bignumMult(const string &linea) : bignumBase(linea) {};
     ~bignumMult() override;
 
     bignumMult *nuevoBignum() const override ;

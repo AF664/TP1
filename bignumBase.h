@@ -45,6 +45,7 @@ class bignumBase
         bignumBase();
         bignumBase(size_t precision);
         bignumBase(const bignumBase &original);
+        bignumBase(const string &linea);
         bignumBase(const string &linea, size_t precision);
         virtual ~bignumBase();
         
@@ -62,7 +63,7 @@ class bignumBase
         short digito(size_t pos) const;
         bool cero() const;
         bool good() const;
-
+        string digitos() const;
         // Pone en cero al numero
         bignumBase &_poner_a_cero();
 
