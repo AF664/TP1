@@ -4,17 +4,15 @@
 #include <sstream>
 #include <cstdlib>
 #include <string>
-#include "calculadora.h"
+#include "calculadora2.h"
 #include "cmdline.h"
 #include "_error.h"
 #include "utils.h"
 
-// En este header ponemos todas las declaraciones que no podemos agrupar
-// en ninguna clase
-#include "utils.h" 
 
 #define CLASSIC 0
 #define KARATSUBA 1
+
 
 #define MSJ_AYUDA "USO calculadora.exe -i <input file> -o <output file> -p <precision>\
 \n<input file>  nombre del archivo de entrada. Stdin por defecto\
@@ -61,18 +59,35 @@ int main(int argc,char *const argv[])
     comandos.parse(argc, argv);
     calculadora cuenta;
 	status_t estado_aplicacion = OK;
-
-    while( (*iss >> cuenta) ) 
-    {
-        *oss << cuenta.resultado() << '\n';
-		if( !cuenta.good())
-		{
-			error_msj(cuenta.estado());
-			estado_aplicacion = NOK;
-		}
-
-		
-    }
+	
+	if(multiplication == CLASSIC)
+	{
+    	while( (*iss>>cuenta) ) 
+    	{
+			bignumMult operando1(1000), operando2(1000);
+        	*oss << *(cuenta.resultado(&operando1, &operando2))<<endl;
+			if( !cuenta.good())
+			{
+				error_msj(cuenta.estado());
+				estado_aplicacion = NOK;
+			}		
+    	}
+	}
+	else if(multiplication == KARATSUBA)
+	{		
+		while( (*iss>>cuenta) ) 
+    	{
+			bignumKarat operando1(100), operando2(100);
+        	*oss<<*(cuenta.resultado(&operando1, &operando2))<<endl;
+			if( !cuenta.good())
+			{
+				error_msj(cuenta.estado());
+				estado_aplicacion = NOK;
+			}
+    	}
+	}
+	else
+		estado_aplicacion = NOK;
     return estado_aplicacion;
 }
 
@@ -154,7 +169,6 @@ static void opt_multiplication(string const &arg)
 {
 	istringstream iss(arg);
 	string word;
-	int i = 0;
 	// Intentamos extraer el factor de la línea de comandos.
 	// Para detectar argumentos tipo char que conforman una
 	// palabra, vamos a verificar que EOF llegue justo

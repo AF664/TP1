@@ -11,6 +11,7 @@
 #include <iostream>
 #include <string>
 
+
 bool is_digits(const std::string &str);
 bool is_operation(const std::string &str);
 
@@ -28,14 +29,18 @@ class calculadora
     private:
         queue <string> _cuenta;
         status_t _estado;
+        operacion_t _operacion;
 
         status_t crearColaRPN(const string &, queue <string> &);
         bool checkPrecedence(const char &, const char &);
         //Remueve espacios
         string removeSpaces(string);
-        bignumBase *_operando1;
-        bignumBase *_operando2;
-        operacion_t _operacion;
+        bool is_digits(const std::string &);
+        bool is_binary_operator(const std::string &);
+        bool is_unary_operator(const std::string &);
+        bignumBase * resolve_binary(bignumBase *, bignumBase *, string);
+        bignumBase * resolve_unary(bignumBase *, string);
+
     public:
 
         calculadora();    
@@ -46,7 +51,7 @@ class calculadora
         bool good();
         
         void ordenar_stack();
-        bignumBase *resultado();
+        bignumBase *resultado(bignumBase *, bignumBase *);
 
         calculadora &operator=(const string &linea);
     

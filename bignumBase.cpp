@@ -5,6 +5,7 @@
 */
 
 #include "bignumBase.h"
+#include <sstream>
 
 
 unsigned short *bignumBase::_crear_digitos(unsigned precision)
@@ -575,4 +576,11 @@ bignumBase &bignumBase::operator++(int)
    return *this +=1;
 }
 
-
+string bignumBase::bignum_to_string()
+{
+    stringstream istr;
+    
+    for(size_t i = 0; i<_largo; i++)
+        istr<<_digitos[i];
+    return istr.str();
+}

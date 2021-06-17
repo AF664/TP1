@@ -17,23 +17,15 @@ calculadora::calculadora(const string &scuenta)
 
     str = removeSpaces(scuenta);
     _estado = crearColaRPN(str, _cuenta);
-    _operando1 = NULL;
-    _operando2 = NULL;
 }
 
 calculadora::calculadora()
 {
-    _operando1 = NULL;
-    _operando2 = NULL;
      _estado = OK ;
 }
 
 calculadora::~calculadora()
 {
-    if(_operando1)
-        delete _operando1;
-    if(_operando2)
-        delete _operando2;
 }
 
 status_t calculadora::estado()
@@ -57,84 +49,73 @@ calculadora &calculadora::operator=(const string &linea)
 
 istream& operator>>(std::istream &is ,calculadora &entrada)
 {
-/*    string linea;
+    string linea;
     getline(is,linea );
     if( !is.good())
     {
         entrada._estado=ERROR_ENTRADA;
         return is;
     }
-    entrada = linea;
-*/   
+    entrada = linea;   
     return is;
 
 }
 
-bignumBase *calculadora::resultado()
+bignumBase *calculadora::resultado(bignumBase *operando1, bignumBase *operando2)
 {
-    stack <string> aux;     
-    bool estado = false;
-    size_t cantidad_num;
-    string str;
-    
-    if(this->good()){
-        while (_cuenta.length() > 2){
-            ordenar_stack();
-            // Buscamos en la pila la operacion y los numeros
-            estado = false;
-            cantidad_num = 0;
-            while((!_cuenta.empty())){
-                str = _cuenta.pull();
-                aux.push(str);
-                if(is_digits(str))cantidad_num++;
-                if(cantidad_num >= 2 && is_operation(str)){
-                    estado = true;
-                    break;
-                } 
-            }
-            if(estado){
-                cout << "Operacion" << endl;
-                size_t i;
-                bignumBase *res;
-                stack <string> aux2;
-                string op = aux.pull();
-                string num1, num2, resul = "0";
+   string soperando1, soperando2, sres, sop;
+   bignumBase *res ;
+   stack <string> pila;
+   res = operando1->nuevoBignum();
 
-                for( i=0 ; i< NO_OP && op.find(DiccionarioOp[i]) == std::string::npos ; i++);
-                _operacion = ( i < NO_OP) ? ( operacion_t )i : NO_OP;
-                num2 = aux.pull();
-                num1 = aux.pull();
-                cout << num1 << op << num2 << endl;
-                // Guardo en _cuenta, el resultado en el lugar de num1, num2, op
-                aux.push(resul);
-                while (_cuenta.length())aux.push(_cuenta.pull());
-                while (aux.length())aux2.push(aux.pull());
-                while (aux2.length())_cuenta.push(aux2.pull());
-		   // Aca se hacen las cuentas
-                res = _operando1->clonarBignum();
-                if( _operacion == SUMAR)
-                    *res += *_operando2;
-                else if( _operacion == RESTAR)
-                    *res -= *_operando2;
-                else  if( _operacion == MULTIPLICAR)
-                    *res *= *_operando2;
-                else  if( _operacion == DIVISION)
-                    *res /= *_operando2;
+   while((_cuenta.length() > 0) || (pila.length() > 1))
+   {
+       //Mientras no se llegue a un operador y no se acabe la cola
+        while(_cuenta.length() && is_digits((sop = _cuenta.pull())))
+            pila.push(sop);
+        if(is_binary_operator(sop) == true)
+        {
+            if(pila.length() < 2)
+            {
+                _estado = NOK;
+                return res;
+            }
+            soperando2 = pila.pull();
+            soperando1 = pila.pull();
+            if(is_digits(soperando2) == false || is_digits(soperando1) == false)
+            {
+                pila.push(soperando1);
+                pila.push(soperando2);
+            }
+            else
+            {
+                *operando1 = soperando1;
+                *operando2 = soperando2;
+                res = resolve_binary(operando1, operando2, sop);
+                pila.push(res->bignum_to_string());
             }
         }
-        // Las operaciones restantes son unitarias (solo quedan 2 elementos)
-        string val1, val2;
-        val1 = _cuenta.pull();
-        val2 = _cuenta.pull();
-        val1 = val2 == "p" ? val1 : val1 = is_operation(val1) ? val1.erase(0,1) : val1.insert(0,"-");
-        _cuenta.push(val1);  
-    }
-    // retorno el unico elemento que queda en _cuenta
-    cout << _cuenta << endl;
-    str = _cuenta.pull();
-    bignumBase *res;     // falta inicializarlo con el str
-    *res = str;
-    return res;
+        if(is_unary_operator(sop) == true)
+        {
+            if(pila.length() < 1)
+            {
+                _estado = NOK;
+                return res;
+            }
+            soperando1 = pila.pull();
+            if(is_digits(soperando1) == false)
+                pila.push(soperando1);
+            else
+            {
+                *operando1 = soperando1;
+                res = resolve_unary(operando1, sop);
+                pila.push(res->bignum_to_string());
+            }
+        }
+   }
+   *res = pila.pull();
+   _estado = OK;
+   return res;
 }
 
 // ordenar stack agrupa los numeros con sus signos 121 n --> -121
@@ -264,7 +245,6 @@ status_t calculadora::crearColaRPN(const string &linea, queue <string> &salida)
     //Lo que quedó en la pila lo mando a la salida
     while(pila.length())
         salida.push(pila.pull());
-
     return OK;
 }
 
@@ -291,16 +271,44 @@ string calculadora::removeSpaces(string str)
 }
 
 
+bignumBase * calculadora::resolve_binary(bignumBase *operando1, bignumBase *operando2, string op)
+{
+    bignumBase *res = operando1->clonarBignum();
+
+    if(op[0] == '+')
+        *res += *operando2;
+    else if(op[0] == '-')
+        *res -= *operando2;
+    else if(op[0] == '*')
+        *res *= *operando2;
+    else
+        *res /= *operando2;
+    return res;
+}
+
+bignumBase * calculadora::resolve_unary(bignumBase *operando, string op)
+{
+    bignumBase *res = operando->clonarBignum();
+
+    if(op[0] == 'n')
+        res->set_signo(NEGATIVO);
+    return res;
+}
 
 // Tomo numeros con signo
-bool is_digits(const std::string &str)
+bool calculadora::is_digits(const std::string &str)
 {
     return str.find_first_not_of("-0123456789") == std::string::npos;
 }
 
-bool is_operation(const std::string &str)
+bool calculadora::is_binary_operator(const std::string &str)
 {
     return str.find_first_not_of("-+*/") == std::string::npos;
+}
+
+bool calculadora::is_unary_operator(const std::string &str)
+{
+    return str.find_first_not_of("np") == std::string::npos;
 }
 
 

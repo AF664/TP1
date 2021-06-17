@@ -6,17 +6,17 @@ SHELL := /bin/bash
 all: main
 	
 
-main: main.o cmdline.o bignumBase.o bignumMult.o bignumKarat.o calculadora.o utils.o _error.o
-	$(CXX) $(CXXFLAGS) -o main bignumBase.o bignumMult.o bignumKarat.o calculadora.o cmdline.o main.o utils.o _error.o 
+main: main.o cmdline.o bignumBase.o bignumMult.o bignumKarat.o calculadora2.o utils.o _error.o
+	$(CXX) $(CXXFLAGS) -o main bignumBase.o bignumMult.o bignumKarat.o calculadora2.o cmdline.o main.o utils.o _error.o 
 
-main.o: main.cpp cmdline.h calculadora.h bignumBase.h bignumMult.h bignumKarat.h utils.h _error.h
+main.o: main.cpp cmdline.h calculadora2.h bignumBase.h bignumMult.h bignumKarat.h utils.h _error.h
 	$(CXX) $(CXXFLAGS) -c main.cpp
 
 cmdline.o: cmdline.cc cmdline.h
 	$(CXX) $(CXXFLAGS) -c cmdline.cc
 
-calculadora.o: calculadora.cpp calculadora.h 
-	$(CXX) $(CXXFLAGS) -c calculadora.cpp
+calculadora.o: calculadora2.cpp calculadora2.h 
+	$(CXX) $(CXXFLAGS) -c calculadora2.cpp
 
 bignumBase.o: bignumBase.cpp bignumBase.h bignumMult.h bignumKarat.h
 	$(CXX) $(CXXFLAGS) -c bignumBase.cpp

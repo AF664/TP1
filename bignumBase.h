@@ -81,7 +81,7 @@ class bignumBase
 
         bignumBase &_cambiar_precision(size_t precision);
 
-
+        string bignum_to_string();
 
         bignumBase &operator=(const bignumBase &original);
         bignumBase &operator=(const string &linea) ;
