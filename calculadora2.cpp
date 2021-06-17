@@ -307,7 +307,10 @@ bignumBase * calculadora::resolve_unary(bignumBase *operando, string op)
 // Tomo numeros con signo
 bool calculadora::is_digits(const std::string &str)
 {
-    return str.find_first_not_of("-0123456789") == std::string::npos;
+    if(str.length() == 1)
+        return str.find_first_not_of("0123456789") == std::string::npos;
+    else
+        return str.find_first_not_of("0123456789", 1) == std::string::npos;
 }
 
 bool calculadora::is_binary_operator(const std::string &str)
