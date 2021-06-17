@@ -73,12 +73,16 @@ stack<T>::~stack()
 template<typename T>
 T stack<T>::pull()
 {
+	if(!ptr_)
+		abort();
 	return ptr_[--tos_];
 }
 
 template<typename T>
 void stack<T>::pull(T &top)
 {
+	if(!ptr_)
+		abort();
 	top = this->pull();
 }
 
