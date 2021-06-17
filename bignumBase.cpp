@@ -571,6 +571,8 @@ string bignumBase::bignum_to_string()
 {
     stringstream istr;
     
+    if(_signo == NEGATIVO)
+        istr<<'-';
     for(size_t i = (_largo - 1); i != 0; i--)
         istr<<_digitos[i];
     istr<<_digitos[0];

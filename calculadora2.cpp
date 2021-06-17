@@ -299,6 +299,8 @@ bignumBase * calculadora::resolve_unary(bignumBase *operando, string op)
 
     if(op[0] == 'n')
         res->set_signo(NEGATIVO);
+    else
+        res->set_signo(POSITIVO);
     return res;
 }
 
