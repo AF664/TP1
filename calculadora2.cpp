@@ -8,7 +8,7 @@
 
 using namespace std ;
 
-char DiccionarioOperaciones[]= {'+','-','*','(', ')', 'n', 'p' , '\0'};
+char DiccionarioOperaciones[]= {'+','-','*','/','(', ')', 'n', 'p' , '\0'};
 string DiccionarioOp[]= {"+","-","*", "/"};
 
 calculadora::calculadora(const string &scuenta)
@@ -174,6 +174,8 @@ status_t calculadora::crearColaRPN(const string &linea, queue <string> &salida)
         //Si es un número
         if(pos1 != pos2)
         {
+            if(str1.find_first_not_of("0123456789") != string::npos)
+                return ERROR_ENTRADA;
             str1 = linea.substr(pos1, pos2 - pos1);
             salida.push(str1);
         }
@@ -196,7 +198,7 @@ status_t calculadora::crearColaRPN(const string &linea, queue <string> &salida)
                 }
                 //Si no se encuentra el otro paréntesis es un error
                 if(str1[0] != '(')
-                    return NOK;
+                    return ERROR_ENTRADA;
             }
             
             //En caso de que sea cualquier otro operador
