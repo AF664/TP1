@@ -158,8 +158,8 @@ bignumBase &bignumBase::operator=(const bignumBase &original)
 bignumBase &bignumBase::operator=(const string &linea)
 {
     string aux(linea);
-    size_t longitud = stringDigits(aux);  
-    longitud--;    
+    size_t longitud = stringDigits(aux);
+    longitud--;        
  
     if( !(longitud) )   
     {
@@ -217,8 +217,9 @@ std::ostream& operator<<(std::ostream &fo,const bignumBase &numero)
     {
         fo<< (char) ((numero._signo == POSITIVO) ? ' ':'-' ) ;
 
-        for(size_t i=numero._largo-1 ; i < numero._largo  ; --i)  
-            fo << (char) (numero._digitos[i] + '0');
+        for(size_t i=numero._largo-1 ; i != 0  ; --i)  
+            fo <<numero._digitos[i];
+        fo <<numero._digitos[0];
     }
     else
         fo << "linea no procesada" << '\n';
@@ -274,8 +275,6 @@ bignumBase &bignumBase::operator+=(const bignumBase &sumando1)
     // se hace el clonado porque no se puede instanciar la clase
     // bingumBase, ya que es abstracta.  
     bignumBase *s1 = sumando1.clonarBignum();
-    cout<<"op1:"<<*s1<<endl;
-    cout<<"op2:"<<*this<<endl;
     int carry; 
     int signo = _signo + s1->_signo;
     if( !good() || !s1->good())
@@ -311,7 +310,7 @@ bignumBase &bignumBase::operator+=(const bignumBase &sumando1)
         _actualizar_largo();
         _digitos[_largo]=1;
     }
-
+    
     _actualizar_largo();
     
     delete s1;  
@@ -572,7 +571,8 @@ string bignumBase::bignum_to_string()
 {
     stringstream istr;
     
-    for(size_t i = 0; i<_largo; i++)
+    for(size_t i = (_largo - 1); i != 0; i--)
         istr<<_digitos[i];
+    istr<<_digitos[0];
     return istr.str();
 }

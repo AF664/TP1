@@ -64,10 +64,12 @@ istream& operator>>(std::istream &is ,calculadora &entrada)
 bignumBase *calculadora::resultado(bignumBase *operando1, bignumBase *operando2)
 {
    string soperando1, soperando2, sres, sop;
-   bignumBase *res ;
+   bignumBase *res  = NULL;
    stack <string> pila;
    res = operando1->nuevoBignum();
 
+   if(_estado != OK)
+        return res;
    while((_cuenta.length() > 0) || (pila.length() > 1))
    {
        //Mientras no se llegue a un operador y no se acabe la cola
@@ -116,7 +118,6 @@ bignumBase *calculadora::resultado(bignumBase *operando1, bignumBase *operando2)
         }
    }
    *res = pila.pull();
-   _estado = OK;
    return res;
 }
 
@@ -151,7 +152,8 @@ status_t calculadora::crearColaRPN(const string &linea, queue <string> &salida)
 
     pos1 = 0;
     pos2 = 0;
-    l = linea.length();
+    if(!(l = linea.length()))
+        return ERROR_ENTRADA;
 
     //Si el primer caracter es un menos o más es operador unario
     if(linea[0] == '+')

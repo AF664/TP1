@@ -58,7 +58,6 @@ int main(int argc,char *const argv[])
     cmdline comandos(config);
     comandos.parse(argc, argv);
     calculadora cuenta;
-	status_t estado_aplicacion = OK;
 	bignumBase *res;
 	
 	if(multiplication == CLASSIC)
@@ -67,12 +66,12 @@ int main(int argc,char *const argv[])
     	{
 			bignumMult operando1, operando2;
 			res = cuenta.resultado(&operando1, &operando2);
-        	*oss << *res<<endl;
-			if( !cuenta.good())
+			if(!cuenta.good())
 			{
 				error_msj(cuenta.estado());
-				estado_aplicacion = NOK;
-			}		
+				return NOK;
+			}
+        	*oss <<*res<<endl;		
     	}
 	}
 	else if(multiplication == KARATSUBA)
@@ -80,17 +79,18 @@ int main(int argc,char *const argv[])
 		while( (*iss>>cuenta) ) 
     	{
 			bignumKarat operando1, operando2;
-        	*oss<<*(cuenta.resultado(&operando1, &operando2))<<endl;
+			res = cuenta.resultado(&operando1, &operando2);
 			if( !cuenta.good())
 			{
 				error_msj(cuenta.estado());
-				estado_aplicacion = NOK;
-			}
+				return NOK;
+			}			
+			*oss<<*res<<endl;
     	}
 	}
 	else
-		estado_aplicacion = NOK;
-    return estado_aplicacion;
+		return NOK;
+    return OK;
 }
 
 
