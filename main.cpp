@@ -62,7 +62,7 @@ int main(int argc,char *const argv[])
 	
 	if(multiplication == CLASSIC)
 	{
-    	while( (*iss>>cuenta) ) 
+    	while((*iss>>cuenta)) 
     	{
 			bignumMult operando1, operando2;
 			res = cuenta.resultado(&operando1, &operando2);
@@ -76,7 +76,7 @@ int main(int argc,char *const argv[])
 	}
 	else if(multiplication == KARATSUBA)
 	{		
-		while( (*iss>>cuenta) ) 
+		while((*iss>>cuenta)) 
     	{
 			bignumKarat operando1, operando2;
 			res = cuenta.resultado(&operando1, &operando2);

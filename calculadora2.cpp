@@ -110,7 +110,6 @@ bignumBase *calculadora::resultado(bignumBase *operando1, bignumBase *operando2)
             else
             {
                 *operando1 = soperando1;
-                cout<<"operación: "<<sop<<*operando1<<endl;
                 res = resolve_unary(operando1, sop);
                 pila.push(res->bignum_to_string());
             }
