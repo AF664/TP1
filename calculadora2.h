@@ -7,7 +7,6 @@
 #include "_error.h"
 #include "queue.h"
 #include "stack.h"
-#include "debug.h"
 #include <iostream>
 #include <string>
 
