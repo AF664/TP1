@@ -38,6 +38,7 @@ bignumBase &bignumMult::operator*=(const bignumBase &f1)
             aux->_desplazamiento_izq(i);
             mult += *aux;
         }
+        
         if( f1.signo() == NEGATIVO)
             mult.set_signo( (signo() == NEGATIVO) ? POSITIVO : NEGATIVO );
         else
@@ -67,7 +68,7 @@ bignumMult operator+(const bignumMult &s1, const bignumMult &s2)
     return aux;
 }
 
-bignumMult operator-(const bignumMult &minuendo, const bignumMult &sustraendo)
+bignumMult operator-(const bignumMult &sustraendo, const bignumMult &minuendo)
 {
     bignumMult aux(sustraendo);
     aux -= minuendo;
