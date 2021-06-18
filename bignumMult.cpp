@@ -38,6 +38,7 @@ bignumBase &bignumMult::operator*=(const bignumBase &f1)
             aux->_desplazamiento_izq(i);
             mult += *aux;
         }
+        
         if( f1.signo() == NEGATIVO)
             mult.set_signo( (signo() == NEGATIVO) ? POSITIVO : NEGATIVO );
         else

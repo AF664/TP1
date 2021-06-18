@@ -166,12 +166,17 @@ bignumBase &bignumBase::operator=(const string &linea)
         this->_poner_a_cero();
         this->set_estado(ERROR_DIGITOS);  // Corrección de problema con identificación de 
     }                                     // números mal conformados.
-    _precision = longitud; 
+    _precision = longitud+1; 
     _digitos = this->_crear_digitos(_precision);
     _signo = ( aux[0] == '+')? POSITIVO : NEGATIVO;
     _largo = longitud;
-    for(int i=longitud, j =0 ; i>0 ; --i , ++j)
-        _digitos[j]= aux[i] -'0' ;                           
+    for(int i=longitud, j =0 ; i>0 ; --i , ++j){
+        _digitos[j]= aux[i] -'0' ;              
+        if(_digitos[j] > 9 || _digitos[j]< 0){
+            this->_poner_a_cero();
+            this->set_estado(ERROR_DIGITOS);
+        }
+    }             
     // corrijo el signo si la entrada fue -0
     if(this->cero())
         _signo= POSITIVO ;
@@ -187,11 +192,8 @@ bignumBase &bignumBase::operator=(int numero)
 
     for(digitos=1; aux/=10 ; digitos++ )
     ;
-    if( digitos > _precision )
-    {   
-        this->set_estado(ERROR_PRECISION);
-        return *this;
-    }
+    if( digitos > _precision ) 
+        _cambiar_precision(_precision + AUMENTO_BLOQUE_PRECISION);
   
     this->_poner_a_cero();
 
@@ -215,8 +217,8 @@ std::ostream& operator<<(std::ostream &fo,const bignumBase &numero)
 {
     if( numero.good())  
     {
-        fo<< (char) ((numero._signo == POSITIVO) ? ' ':'-' ) ;
-
+        //fo<< (char) ((numero._signo == POSITIVO) ? ' ':'-' ) ;
+        if (numero._signo == NEGATIVO)fo << '-';
         for(size_t i=numero._largo-1 ; i != 0  ; --i)  
             fo <<numero._digitos[i];
         fo <<numero._digitos[0];
@@ -250,7 +252,7 @@ bignumBase &bignumBase::_suma_sin_signo(bignumBase const &s2 , int &carry)
         }
     }
 
-//    this->_actualizar_largo();
+    this->_actualizar_largo();
     return *this;
 
 }
@@ -259,6 +261,7 @@ bignumBase &bignumBase::_complemento_base_10()
 {
     unsigned i;
     int carry=1 , parcial=0 ;
+    if(this->cero())return *this;
     for( i=0; i < _precision ; ++i)
     {
         parcial = carry + 9;
@@ -307,9 +310,9 @@ bignumBase &bignumBase::operator+=(const bignumBase &sumando1)
     
     if (carry > 0)
     {        
-        _largo++;
-        _digitos[_largo - 1] = 1;
         _cambiar_precision(_precision + 1);
+        _digitos[_largo] = 1;
+        _largo++;    
     }
     
     _actualizar_largo();
@@ -333,7 +336,8 @@ bignumBase &bignumBase::operator+=(int numero)
 bignumBase &bignumBase::operator-=(const bignumBase &sustraendo)
 {
     bignumBase *aux = sustraendo.clonarBignum();
-    aux->set_signo( (aux->signo() == POSITIVO)? NEGATIVO : POSITIVO  );
+    if( !aux->cero())
+        aux->set_signo( (aux->signo() == POSITIVO)? NEGATIVO : POSITIVO  );
     *this += *aux;
     delete aux;
     return *this;
@@ -360,7 +364,7 @@ bignumBase &bignumBase::_desplazamiento_izq(unsigned shift)
     unsigned i,j;
 
     if( shift + _largo > _precision )
-        _cambiar_precision( shift + _largo);
+        _cambiar_precision( shift + _largo + 1);
     
     for(i= _precision , j =_precision - shift ;  j > 0 ; )
         _digitos[--i] = _digitos[--j];
@@ -404,6 +408,7 @@ bignumBase &bignumBase::_cambiar_precision(size_t precision)
 {
     unsigned short *tmp;
     size_t i;
+    _actualizar_largo();
     if( precision < _largo ) 
         this->set_estado(ERROR_OVERFLOW);
        
@@ -432,10 +437,12 @@ bignumBase &bignumBase::operator*=(int numero)
         numero *= -1;
     }
     acumulador->_poner_a_cero();
+    acumulador->_cambiar_precision(_largo + 1);     // lo agregue
     for(i=0 ; i < _largo  ; i++)
     {
         *aux = _digitos[i] * numero;
         *acumulador += aux->_desplazamiento_izq(i);
+        acumulador->_actualizar_largo();       
     }
     acumulador->_actualizar_largo();
 
@@ -443,7 +450,6 @@ bignumBase &bignumBase::operator*=(int numero)
 
     delete acumulador;
     delete aux;
-    
     return *this;
 }
 
@@ -458,7 +464,6 @@ bignumBase &bignumBase::operator/=(const bignumBase &div)
         delete resultado;
         delete divisor;
         this->set_estado(ERROR_DIVISION);
-        this->_poner_a_cero();
         return *this;
     }
 
