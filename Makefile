@@ -3,13 +3,13 @@ CXXFLAGS = -I. $(CXXARGS) -g
 ERROR =1
 SHELL := /bin/bash
 
-all: main
+all: tp1
 	
 
-main: main.o cmdline.o bignum.o calculadora.o utils.o _error.o
-	$(CXX) $(CXXFLAGS) -o main bignum.o calculadora.o cmdline.o main.o utils.o _error.o 
+tp1: main.o cmdline.o bignumBase.o bignumMult.o bignumKarat.o calculadora.o utils.o _error.o
+	$(CXX) $(CXXFLAGS) -o tp1 bignumBase.o bignumMult.o bignumKarat.o calculadora.o cmdline.o main.o utils.o _error.o 
 
-main.o: main.cpp cmdline.h calculadora.h bignum.h utils.h _error.h
+main.o: main.cpp cmdline.h calculadora.h bignumBase.h bignumMult.h bignumKarat.h utils.h _error.h
 	$(CXX) $(CXXFLAGS) -c main.cpp
 
 cmdline.o: cmdline.cc cmdline.h
@@ -18,8 +18,14 @@ cmdline.o: cmdline.cc cmdline.h
 calculadora.o: calculadora.cpp calculadora.h 
 	$(CXX) $(CXXFLAGS) -c calculadora.cpp
 
-bignum.o: bignum.cpp bignum.h
-	$(CXX) $(CXXFLAGS) -c bignum.cpp
+bignumBase.o: bignumBase.cpp bignumBase.h bignumMult.h bignumKarat.h
+	$(CXX) $(CXXFLAGS) -c bignumBase.cpp
+
+bignumMult.o: bignumMult.cpp bignumBase.h bignumMult.h bignumKarat.h
+	$(CXX) $(CXXFLAGS) -c bignumMult.cpp
+
+bignumKarat.o: bignumKarat.cpp bignumBase.h bignumMult.h bignumKarat.h
+	$(CXX) $(CXXFLAGS) -c bignumKarat.cpp
 
 utils.o: utils.cpp utils.h
 	$(CXX) $(CXXFLAGS) -c utils.cpp
@@ -27,10 +33,10 @@ utils.o: utils.cpp utils.h
 _error.o: _error.cpp _error.h
 	$(CXX) $(CXXFLAGS) -c _error.cpp	
 
-test-fine: main
+test-karatsuba: tp1
 	@set -e;
-	@echo Archivos de prueba: entrada1 salida1 salida1ref con precisión 20.;
-	@if ./main -i entrada1.txt -o salida1.txt -p 20; then\
+	@echo Archivos de prueba: entrada1 salida1 salida1ref con karatsuba.;
+	@if ./tp1 -i entrada1.txt -o salida1.txt -m karatsuba; then\
 		echo Test básico ok.;\
 	else\
 		echo Test fallido.;\
@@ -43,25 +49,25 @@ test-fine: main
 	fi
 	@echo -------------------------------------------------------------------------------;
 
-test-valgrind-fine: main
+test-valgrind-karatsuba: tp1
 	@set -e;
-	@echo Archivos de prueba: entrada1 salida1 salida1ref con precisión 20.;
+	@echo Archivos de prueba: entrada1 salida1 salida1ref con karatsuba.;
 	@echo Probando si hubieron fugas de memoria...;
-	@if valgrind --tool=memcheck --log-file="valgrind-f.txt" ./main -i entrada1.txt -o salida1.txt -p 20; then\
+	@if valgrind --tool=memcheck --log-file="valgrind-f.txt" ./tp1 -i entrada1.txt -o salida1.txt -m karatsuba; then\
 		echo Test ok.;\
 	else\
 		echo Test fallido.;\
 	fi
-	@echo Ver valgrind-f.txt para más detalles fugas de memoria.;
+	@echo Ver valgrind-1.txt para más detalles fugas de memoria.;
 	@echo -------------------------------------------------------------------------------;
 
-test-wrong: main
+test-standard: tp1
 	@set -e;
-	@echo Archivos de prueba: entrada2 salida2 salida2ref, tiene mal el formato y precisión 1.;
-	@if ./main -i entrada2.txt -o salida2.txt -p 1; then\
-		echo Test fallido.;\
-	else\
+	@echo Archivos de prueba: entrada2 salida2 salida2ref con standard.;
+	@if ./tp1 -i entrada2.txt -o salida2.txt -m standard; then\
 		echo Test básico ok.;\
+	else\
+		echo Test fallido.;\
 	fi
 	@echo Probando si el archivo de salida es correcto...;
 	@if diff -b salida2ref.txt salida2.txt >/dev/null 2>&1; then\
@@ -71,17 +77,16 @@ test-wrong: main
 	fi
 	@echo -------------------------------------------------------------------------------;
 
-test-valgrind-wrong: main
+test-valgrind-standard: tp1
 	@set -e;
-	@echo Archivos de prueba: entrada2 salida2 tiene mal el formato y precisión 1.;
+	@echo Archivos de prueba: entrada2 salida2 salida2ref con standard.;
 	@echo Probando si hubieron fugas de memoria...;
-	@if valgrind --tool=memcheck  --log-file="valgrind-w.txt" ./main -i entrada2.txt -o salida2.txt -p 1; then\
-		echo Test fallido.;\
+	@if valgrind --tool=memcheck --log-file="valgrind-2.txt" ./tp1 -i entrada2.txt -o salida2.txt -m standard; then\
+		echo Test ok.;\
 	else\
-		echo Test básico ok.;\
-		echo En este caso no significa que no hubieron fugas.;\
+		echo Test fallido.;\
 	fi
-	@echo Ver valgrind-w.txt para analizar si hubieron fugas.;
+	@echo Ver valgrind-2.txt para más detalles fugas de memoria.;
 	@echo -------------------------------------------------------------------------------;
 
 clean:

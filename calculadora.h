@@ -1,15 +1,24 @@
 #ifndef _CALCULADORA_H_INCLUDED_
 #define _CALCULADORA_H_INCLUDED_
 
-#include "bignum.h"
+#include "bignumBase.h"
+#include "bignumMult.h"
+#include "bignumKarat.h"
 #include "_error.h"
+#include "queue.h"
+#include "stack.h"
 #include <iostream>
 #include <string>
+
+
+bool is_digits(const std::string &str);
+bool is_operation(const std::string &str);
 
 typedef enum operacion {
     SUMAR,
     RESTAR,
     MULTIPLICAR,
+    DIVISION,
     NO_OP
 } operacion_t;
 
@@ -17,25 +26,31 @@ typedef enum operacion {
 class calculadora
 {
     private:
-        bignum _operando1;
-        bignum _operando2;
+        queue <string> _cuenta;
         status_t _estado;
-      
         operacion_t _operacion;
+
+        status_t crearColaRPN(const string &, queue <string> &);
+        bool checkPrecedence(const char &, const char &);
+        //Remueve espacios
+        string removeSpaces(string);
+        bool is_digits(const std::string &);
+        bool is_binary_operator(const std::string &);
+        bool is_unary_operator(const std::string &);
+        bignumBase * resolve_binary(bignumBase *, bignumBase *, string);
+        bignumBase * resolve_unary(bignumBase *, string);
 
     public:
 
         calculadora();    
-        calculadora(bignum &op1, bignum &op2, unsigned precision);
-        calculadora(unsigned precision );
+        calculadora(const string &);
         ~calculadora();
 
-        void set_operacion(operacion_t op);
         status_t estado();
         bool good();
         
-
-        bignum resultado();
+        void ordenar_stack();
+        bignumBase *resultado(bignumBase *, bignumBase *);
 
         calculadora &operator=(const string &linea);
     

@@ -1,0 +1,39 @@
+// Este metodo  devuelve un bignum igual a "numero" pero recortando los
+// digitos entre [inicio, fin] 
+bignum bignum::borrar_digitos(size_t inicio, size_t fin) const{
+    bignum aux(_precision);
+    // Copia un cero en el ultimo digito cuando crea la parte alta,
+    // no es problema porque despues se actualiza su tamaño 
+    for (size_t i = inicio; i < fin; i++){
+        aux._digitos[i - inicio] = _digitos[i];
+    }
+    aux._actualizar_largo();
+    return aux;
+}
+
+// Falta asignar signo pero lo pondria por fuera del metodo
+bignum bignum::karatsuba(const bignum factor1, const bignum factor2){
+    size_t m = min(factor1.largo(), factor2.largo()) / 2;
+    // Multiplicacion entre Bignum y un digito (int)
+    if(factor1.largo() < 2) return (factor2 * int(factor1._digitos[0])); 
+    if(factor2.largo() < 2) return (factor1 * int(factor2._digitos[0]));
+    // Creo los subnumeros
+    bignum low1 = factor1.borrar_digitos(0, m);
+    bignum low2 = factor2.borrar_digitos(0, m);    
+    bignum high1 = factor1.borrar_digitos(m, factor1.largo());
+    bignum high2 = factor2.borrar_digitos(m, factor2.largo());
+    // Llamadas a karatsuba 
+    bignum z0 = karatsuba(low1, low2);
+    bignum z1 = karatsuba((low1 + high1), (low2 + high2));
+    bignum z2 = karatsuba(high1, high2);
+    // Operaciones finales
+    bignum z3 = ((z1 - z2) - z0);
+    z3._desplazamiento_izq(m);
+    z3._actualizar_largo();
+    // Desplazo Z2 
+    z2._desplazamiento_izq((m)*2);
+    z2._actualizar_largo();
+    // return = (z2*10^(2*m)) + ((z1-z2-z0)*10^m) + z0
+    return ( z2 + z3 + z0);
+    // num.signo = (num1.signo() == num2.signo()) ? POSITIVO : NEGATIVO; 
+}
