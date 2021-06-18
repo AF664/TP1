@@ -217,13 +217,8 @@ std::ostream& operator<<(std::ostream &fo,const bignumBase &numero)
 {
     if( numero.good())  
     {
-<<<<<<< HEAD
         //fo<< (char) ((numero._signo == POSITIVO) ? ' ':'-' ) ;
         if (numero._signo == NEGATIVO)fo << '-';
-=======
-        if(numero._signo == NEGATIVO)
-            fo<< '-';
->>>>>>> 66ddb318f828a87817ffea193092712074644db3
         for(size_t i=numero._largo-1 ; i != 0  ; --i)  
             fo <<numero._digitos[i];
         fo <<numero._digitos[0];

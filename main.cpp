@@ -191,7 +191,8 @@ static void opt_multiplication(string const &arg)
 		     << endl;
 		exit(1);
 	}
-	if (word == "classic" || word == "standard") multiplication = CLASSIC;
+	if (word == "classic" || word == "standard")
+		multiplication = CLASSIC;
 	else multiplication = KARATSUBA;
 }
 
