@@ -68,7 +68,7 @@ bignumMult operator+(const bignumMult &s1, const bignumMult &s2)
     return aux;
 }
 
-bignumMult operator-(const bignumMult &minuendo, const bignumMult &sustraendo)
+bignumMult operator-(const bignumMult &sustraendo, const bignumMult &minuendo)
 {
     bignumMult aux(sustraendo);
     aux -= minuendo;

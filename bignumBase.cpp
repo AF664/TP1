@@ -429,7 +429,7 @@ bignumBase &bignumBase::_cambiar_precision(size_t precision)
 bignumBase &bignumBase::operator*=(int numero)
 {
     unsigned i;
-    bignumBase *acumulador = clonarBignum();
+    bignumBase *acumulador = this->clonarBignum();
     bignumBase *aux = clonarBignum();
     if( numero < 0)
     {
@@ -583,4 +583,10 @@ string bignumBase::bignum_to_string()
         istr<<_digitos[i];
     istr<<_digitos[0];
     return istr.str();
+}
+
+
+
+void bignumBase::set_digito(int valor, int posicion){
+    this->_digitos[posicion] = valor;
 }
