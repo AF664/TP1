@@ -166,7 +166,7 @@ bignumBase &bignumBase::operator=(const string &linea)
         this->_poner_a_cero();
         this->set_estado(ERROR_DIGITOS);  // Corrección de problema con identificación de 
     }                                     // números mal conformados.
-    _precision = longitud+1; 
+    _precision = longitud+AUMENTO_BLOQUE_PRECISION; 
     _digitos = this->_crear_digitos(_precision);
     _signo = ( aux[0] == '+')? POSITIVO : NEGATIVO;
     _largo = longitud;
