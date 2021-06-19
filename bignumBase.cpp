@@ -298,8 +298,7 @@ bignumBase &bignumBase::operator+=(const bignumBase &sumando1)
         s1->_complemento_base_10();
     this->_suma_sin_signo( *s1 , carry);
     carry -= signo ;
-    
-    if ( carry == -1 || signo == 2)
+    if ( carry == -1 || carry == 2)//cambio signo
     {  
         _signo = NEGATIVO;
         _complemento_base_10();
