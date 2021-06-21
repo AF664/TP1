@@ -93,8 +93,8 @@ bignumBase *calculadora::resultado(bignumBase *operando1, bignumBase *operando2)
             {
                 *operando1 = soperando1;
                 *operando2 = soperando2;
-                res = resolve_binary(operando1, operando2, sop);
-                pila.push(res->bignum_to_string());
+                resolve_binary(operando1, operando2, sop);
+                pila.push(operando1->bignum_to_string());
             }
         }
         if(is_unary_operator(sop) == true)
@@ -276,20 +276,19 @@ string calculadora::removeSpaces(string str)
 }
 
 
-bignumBase * calculadora::resolve_binary(bignumBase *operando1, bignumBase *operando2, string op)
+void calculadora::resolve_binary(bignumBase *operando1, bignumBase *operando2, string op)
 {
-    //bignumBase *res = operando1->clonarBignum();
-    res = operando1->clonarBignum();
+    //res = operando1->clonarBignum();
 
     if(op[0] == '+')
-        *res += *operando2;
+        *operando1 += *operando2;
     else if(op[0] == '-')
-        *res -= *operando2;
+        *operando1 -= *operando2;
     else if(op[0] == '*')
-        *res *= *operando2;
+        *operando1 *= *operando2;
     else
-        *res /= *operando2;
-    return res;
+        *operando1 /= *operando2;
+    //return res;
 }
 
 void calculadora::resolve_unary(bignumBase *operando, string op)

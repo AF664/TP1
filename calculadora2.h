@@ -39,7 +39,7 @@ class calculadora
         bool is_digits(const std::string &);
         bool is_binary_operator(const std::string &);
         bool is_unary_operator(const std::string &);
-        bignumBase * resolve_binary(bignumBase *, bignumBase *, string);
+        void resolve_binary(bignumBase *, bignumBase *, string);
         void resolve_unary(bignumBase *, string);
 
     public:
