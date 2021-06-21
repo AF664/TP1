@@ -64,7 +64,7 @@ istream& operator>>(std::istream &is ,calculadora &entrada)
 bignumBase *calculadora::resultado(bignumBase *operando1, bignumBase *operando2)
 {
    string soperando1, soperando2, sres, sop;
-   bignumBase *res  = NULL;
+   //bignumBase *res  = NULL;
    stack <string> pila;
    res = operando1->nuevoBignum();
 
@@ -111,8 +111,8 @@ bignumBase *calculadora::resultado(bignumBase *operando1, bignumBase *operando2)
             {
                 *operando1 = soperando1;
                 //cout<<"operación: "<<sop<<*operando1<<endl;
-                res = resolve_unary(operando1, sop);
-                pila.push(res->bignum_to_string());
+                resolve_unary(operando1, sop);
+                pila.push(operando1->bignum_to_string());
             }
         }
    }
@@ -278,7 +278,8 @@ string calculadora::removeSpaces(string str)
 
 bignumBase * calculadora::resolve_binary(bignumBase *operando1, bignumBase *operando2, string op)
 {
-    bignumBase *res = operando1->clonarBignum();
+    //bignumBase *res = operando1->clonarBignum();
+    res = operando1->clonarBignum();
 
     if(op[0] == '+')
         *res += *operando2;
@@ -291,15 +292,12 @@ bignumBase * calculadora::resolve_binary(bignumBase *operando1, bignumBase *oper
     return res;
 }
 
-bignumBase * calculadora::resolve_unary(bignumBase *operando, string op)
+void calculadora::resolve_unary(bignumBase *operando, string op)
 {
-    bignumBase *res = operando->clonarBignum();
-
     if(op[0] == 'n')
-        res->set_signo(NEGATIVO);
+        operando->set_signo(NEGATIVO);
     else
-        res->set_signo(POSITIVO);
-    return res;
+        operando->set_signo(POSITIVO);
 }
 
 // Tomo numeros con signo

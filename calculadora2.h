@@ -30,6 +30,7 @@ class calculadora
         queue <string> _cuenta;
         status_t _estado;
         operacion_t _operacion;
+        bignumBase *res;
 
         status_t crearColaRPN(const string &, queue <string> &);
         bool checkPrecedence(const char &, const char &);
@@ -39,7 +40,7 @@ class calculadora
         bool is_binary_operator(const std::string &);
         bool is_unary_operator(const std::string &);
         bignumBase * resolve_binary(bignumBase *, bignumBase *, string);
-        bignumBase * resolve_unary(bignumBase *, string);
+        void resolve_unary(bignumBase *, string);
 
     public:
 
