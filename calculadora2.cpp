@@ -93,6 +93,11 @@ bignumBase *calculadora::resultado(bignumBase *operando1, bignumBase *operando2)
                 *operando1 = soperando1;
                 *operando2 = soperando2;
                 resolve_binary(operando1, operando2, sop);
+                if(operando1->estado() == ERROR_DIVISION){
+                    _estado = NOK;
+                    cout << "Division";
+                    return res;                    
+                }
                 pila.push(operando1->bignum_to_string());
             }
         }
@@ -286,11 +291,16 @@ void calculadora::resolve_binary(bignumBase *operando1, bignumBase *operando2, s
         *operando1 -= *operando2;
     else if(op[0] == '*')
         *operando1 *= *operando2;
-    else
-        *operando1 /= *operando2;
+    else{
+        if(operando2->cero()){
+            operando1->set_estado(ERROR_DIVISION);
+        }else
+            *operando1 /= *operando2;
+    }
     //return res;
 }
 
+    
 void calculadora::resolve_unary(bignumBase *operando, string op)
 {
     if(op[0] == 'n')

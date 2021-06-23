@@ -457,20 +457,12 @@ bignumBase &bignumBase::operator*=(int numero)
 
 bignumBase &bignumBase::operator/=(const bignumBase &div)
 {
-    int i;
     bignumBase *resultado = this->clonarBignum();
     bignumBase *divisor = div.clonarBignum();
     signo_t signo_resultado  = ( signo() == div.signo() )? POSITIVO : NEGATIVO;
-
-    if(divisor->cero()){
-        delete resultado;
-        delete divisor;
-        this->set_estado(ERROR_DIVISION);
-        return *this;
-    }
-
     set_signo( POSITIVO);
     divisor->set_signo(POSITIVO);
+    int i;
 
     if( *this < *divisor)
         this->_poner_a_cero();
