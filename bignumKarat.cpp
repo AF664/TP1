@@ -26,7 +26,6 @@ int bignumKarat::modulo_int() const
  bignumKarat *bignumKarat::nuevoBignum() const 
  {
      return new bignumKarat();
-
  }
 
  bignumKarat *bignumKarat::clonarBignum() const

@@ -12,6 +12,8 @@ unsigned short *bignumBase::_crear_digitos(unsigned precision)
 {
     unsigned short *digitos;
     
+    if(_digitos)
+        delete [] _digitos;
     digitos = precision ? new unsigned short[precision]: NULL;
     for( unsigned i=0; i< precision ; ++i)
         digitos[i]=0; 
@@ -62,6 +64,7 @@ bignumBase::bignumBase()
 
 bignumBase::bignumBase(size_t precision)
 {
+    _digitos = NULL;
      _digitos = _crear_digitos(precision);
     _precision = precision;
     _largo = (precision > 0)? 1 : 0;
@@ -74,6 +77,7 @@ bignumBase::bignumBase(const bignumBase &original)
 {
     _precision = original._precision;
     _largo = original._largo;
+    _digitos = NULL;
     _digitos = _crear_digitos(_precision);
     _signo = original._signo;
 
@@ -84,6 +88,7 @@ bignumBase::bignumBase(const bignumBase &original)
 
 bignumBase::bignumBase(const string &linea, size_t precision)
 {    
+    _digitos = NULL;
      _digitos = _crear_digitos(precision);
      _precision = precision;
 
@@ -94,9 +99,7 @@ bignumBase::bignumBase(const string &linea, size_t precision)
 bignumBase::~bignumBase()
 {
     if(_digitos!=NULL)
-        delete [] _digitos;
-    
-    
+        delete [] _digitos;    
 }
 
 size_t bignumBase::precision() const

@@ -71,7 +71,8 @@ int main(int argc,char *const argv[])
 				error_msj(cuenta.estado());
 				return NOK;
 			}
-        	*oss <<*res<<endl;		
+        	*oss <<*res<<endl;
+			delete res;	
     	}
 	}
 	else if(multiplication == KARATSUBA)
@@ -86,6 +87,7 @@ int main(int argc,char *const argv[])
 				return NOK;
 			}			
 			*oss<<*res<<endl;
+			delete res;
     	}
 	}
 	else

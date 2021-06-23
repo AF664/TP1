@@ -64,9 +64,8 @@ istream& operator>>(std::istream &is ,calculadora &entrada)
 bignumBase *calculadora::resultado(bignumBase *operando1, bignumBase *operando2)
 {
    string soperando1, soperando2, sres, sop;
-   //bignumBase *res  = NULL;
+   bignumBase *res  = NULL;
    stack <string> pila;
-   res = operando1->nuevoBignum();
 
    if(_estado != OK)
         return res;
@@ -116,6 +115,7 @@ bignumBase *calculadora::resultado(bignumBase *operando1, bignumBase *operando2)
             }
         }
    }
+   res = operando1->nuevoBignum();
    *res = pila.pull();
    return res;
 }
