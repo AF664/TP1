@@ -3,7 +3,7 @@
 
 #include "bignumBase.h"
 
-#define UMBRAL_KARAT 3
+#define UMBRAL_KARAT 2
 
 class bignumKarat : public bignumBase 
 {
@@ -24,11 +24,13 @@ class bignumKarat : public bignumBase
     // std::numeric_limits<int>::max() 
     int modulo_int() const;
 
-    bignumKarat mult_karatsuba(const bignumKarat &x, const bignumKarat &y);
+
     bignumKarat karatsuba(bignumKarat factor1, bignumKarat factor2);
     bignumKarat borrar_digitos(size_t inicio, size_t fin) const;
     bignumBase &operator*=(const bignumBase &f1) override;
-    bignumKarat operator/=(int numero);     // cambiar /= por +=
+    bignumKarat &operator*=(int numero);
+    bignumKarat &operator=(const bignumKarat &original);
+    bignumKarat &operator=(int numero);
     //friend bignumKarat operator*(const bignumKarat &factor1, const bignumKarat &factor2);
     friend bignumKarat operator+(const bignumKarat &sumando1, const bignumKarat &sumando2);
     friend bignumKarat operator-(const bignumKarat &minuendo, const bignumKarat &sustraendo);

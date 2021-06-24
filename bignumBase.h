@@ -90,7 +90,8 @@ class bignumBase
         bignumBase &operator+=(int numero);
         bignumBase &operator+=(const bignumBase &sumando);
         bignumBase &operator-=(const bignumBase &sustraendo);
-        bignumBase &operator*=(int numero);
+        bignumBase &operator*=(int);
+       
         bignumBase &operator/=(const bignumBase &divisor);
         bignumBase &operator++(int); // operador prefijo
 

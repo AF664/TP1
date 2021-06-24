@@ -17,6 +17,9 @@ class bignumMult : public bignumBase
     bignumMult *clonarBignum() const  override ;
 
     bignumBase &operator*=(const bignumBase &f1) override;
+    bignumMult &operator*=(int numero);
+    bignumMult &operator=(const bignumMult &original);
+    bignumMult &operator=(int);
     friend bignumMult operator*(const bignumMult &factor1, const bignumMult &factor2);
     friend bignumMult operator+(const bignumMult &sumando1, const bignumMult &sumando2);
     friend bignumMult operator-(const bignumMult &minuendo, const bignumMult &sustraendo);

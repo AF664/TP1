@@ -22,7 +22,7 @@ bignumMult::~bignumMult()
 bignumBase &bignumMult::operator*=(const bignumBase &f1)
 {
     bignumMult mult(*this);
-    bignumBase *aux = f1.clonarBignum();
+    bignumMult aux(f1);
 
     size_t i; // iterador
 
@@ -33,10 +33,10 @@ bignumBase &bignumMult::operator*=(const bignumBase &f1)
         mult._poner_a_cero();
         for(i=0; i < largo() && mult.good() ; i++ )
         {
-            *aux = f1;
-            *aux *= digito(i);
-            aux->_desplazamiento_izq(i);
-            mult += *aux;
+            aux = f1;
+            aux *= digito(i);
+            aux._desplazamiento_izq(i);
+            mult += aux;
         }
         
         if( f1.signo() == NEGATIVO)
@@ -47,9 +47,6 @@ bignumBase &bignumMult::operator*=(const bignumBase &f1)
         *this = mult;
         _actualizar_largo();
     }
-
-    delete aux;
-
     return *this;
 }
 
@@ -73,4 +70,29 @@ bignumMult operator-(const bignumMult &sustraendo, const bignumMult &minuendo)
     bignumMult aux(sustraendo);
     aux -= minuendo;
     return aux;
+}
+
+
+bignumMult &bignumMult::operator*=(int numero)
+{
+    bignumBase *producto=this;
+    *producto *= numero;
+    return *this;
+}
+
+
+bignumMult &bignumMult::operator=(const bignumMult &original)
+{
+    bignumBase *destino = this;
+    bignumBase const *origen = &original;
+    *destino = *origen;
+    return *this;
+}
+
+
+bignumMult &bignumMult::operator=(int numero)
+{
+    bignumBase *destino=this;
+    *destino = numero;
+    return *this;
 }

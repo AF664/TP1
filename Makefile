@@ -33,10 +33,10 @@ utils.o: utils.cpp utils.h
 _error.o: _error.cpp _error.h
 	$(CXX) $(CXXFLAGS) -c _error.cpp	
 
-test-fine: main
+test-fine: tp1
 	@set -e;
 	@echo Archivos de prueba: entrada1 salida1 salida1ref con precisión 20.;
-	@if ./main -i entrada1.txt -o salida1.txt -p 20; then\
+	@if ./tp1 -i entrada1.txt -o salida1.txt -p 20; then\
 		echo Test básico ok.;\
 	else\
 		echo Test fallido.;\
@@ -49,11 +49,11 @@ test-fine: main
 	fi
 	@echo -------------------------------------------------------------------------------;
 
-test-valgrind-fine: main
+test-valgrind-fine: tp1
 	@set -e;
 	@echo Archivos de prueba: entrada1 salida1 salida1ref con precisión 20.;
 	@echo Probando si hubieron fugas de memoria...;
-	@if valgrind --tool=memcheck --log-file="valgrind-f.txt" ./main -i entrada1.txt -o salida1.txt -p 20; then\
+	@if valgrind --tool=memcheck --log-file="valgrind-f.txt" ./tp1 -i entrada1.txt -o salida1.txt -p 20; then\
 		echo Test ok.;\
 	else\
 		echo Test fallido.;\
@@ -61,10 +61,10 @@ test-valgrind-fine: main
 	@echo Ver valgrind-f.txt para más detalles fugas de memoria.;
 	@echo -------------------------------------------------------------------------------;
 
-test-wrong: main
+test-wrong: tp1
 	@set -e;
 	@echo Archivos de prueba: entrada2 salida2 salida2ref, tiene mal el formato y precisión 1.;
-	@if ./main -i entrada2.txt -o salida2.txt -p 1; then\
+	@if ./tp1 -i entrada2.txt -o salida2.txt -p 1; then\
 		echo Test fallido.;\
 	else\
 		echo Test básico ok.;\
@@ -77,11 +77,11 @@ test-wrong: main
 	fi
 	@echo -------------------------------------------------------------------------------;
 
-test-valgrind-wrong: main
+test-valgrind-wrong: tp1
 	@set -e;
 	@echo Archivos de prueba: entrada2 salida2 tiene mal el formato y precisión 1.;
 	@echo Probando si hubieron fugas de memoria...;
-	@if valgrind --tool=memcheck  --log-file="valgrind-w.txt" ./main -i entrada2.txt -o salida2.txt -p 1; then\
+	@if valgrind --tool=memcheck  --log-file="valgrind-w.txt" ./tp1 -i entrada2.txt -o salida2.txt -p 1; then\
 		echo Test fallido.;\
 	else\
 		echo Test básico ok.;\
@@ -91,4 +91,4 @@ test-valgrind-wrong: main
 	@echo -------------------------------------------------------------------------------;
 
 clean:
-	$(RM) -vf *.o *.t *.out *.err main
+	$(RM) -vf *.o *.t *.out *.err main tp1

@@ -265,6 +265,7 @@ bignumBase &bignumBase::_complemento_base_10()
     unsigned i;
     int carry=1 , parcial=0 ;
     if(this->cero())return *this;
+    _actualizar_largo();
     for( i=0; i < _precision ; ++i)
     {
         parcial = carry + 9;
@@ -272,7 +273,7 @@ bignumBase &bignumBase::_complemento_base_10()
         _digitos[i] = ( parcial > 9)? parcial % 10 : parcial;
         carry = parcial / 10;
     }
-    this->_actualizar_largo();
+    _actualizar_largo();
     return *this;
 }
 
@@ -431,11 +432,13 @@ bignumBase &bignumBase::_cambiar_precision(size_t precision)
 bignumBase &bignumBase::operator*=(int numero)
 {
     unsigned i;
+    signo_t sig = _signo;
     bignumBase *acumulador = this->clonarBignum();
     bignumBase *aux = clonarBignum();
+    aux->_signo=POSITIVO;
     if( numero < 0)
     {
-        _signo = (_signo == POSITIVO)? NEGATIVO : POSITIVO;
+        sig = (sig == POSITIVO)? NEGATIVO : POSITIVO;
         numero *= -1;
     }
     acumulador->_poner_a_cero();
@@ -449,7 +452,7 @@ bignumBase &bignumBase::operator*=(int numero)
     acumulador->_actualizar_largo();
 
     *this = *acumulador;
-
+    this->_signo=sig;
     delete acumulador;
     delete aux;
     return *this;
