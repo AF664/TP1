@@ -15,7 +15,7 @@ using namespace std;
      NEGATIVO=1
  } signo_t;
 
- #define AUMENTO_BLOQUE_PRECISION 10
+ #define AUMENTO_BLOQUE_PRECISION 100
 
 // define la clase abstracta bignumBase. 
 class bignumBase
@@ -60,6 +60,7 @@ class bignumBase
         status_t estado() const;
         void set_estado(status_t nuevo);
         void set_signo( signo_t);
+        void set_digito(int valor, size_t posicion);
         short digito(size_t pos) const;
         bool cero() const;
         bool good() const;
@@ -83,7 +84,6 @@ class bignumBase
         bignumBase &_cambiar_precision(size_t precision);
 
         string bignum_to_string();
-        void set_digito(int valor, int posicion);
         bignumBase &operator=(const bignumBase &original);
         bignumBase &operator=(const string &linea) ;
         bignumBase &operator=(int numero);

@@ -63,13 +63,33 @@ bignumKarat operator-(const bignumKarat &sustraendo, const bignumKarat &minuendo
 }
 
 
+bignumKarat &bignumKarat::mult_digito(int d)
+{
+    int c;
+    size_t i;
+    for(i=0 , c=0; i< precision();i++)
+    {
+        c+=digito(i)*d;
+        set_digito( c%10 ,i );
+        c/=10;
+    }
+    set_digito(c/10,i-- );
+    set_digito( c%10,i);
+    
+    return *this;
+}
+
 
 // Falta asignar signo pero lo pondria por fuera del metodo
-bignumKarat bignumKarat::karatsuba(bignumKarat factor1, bignumKarat factor2){
+bignumKarat bignumKarat::karatsuba(bignumKarat factor1, bignumKarat factor2)
+{
     size_t m = min(factor1.largo(), factor2.largo()) / 2;
     // Multiplicacion entre Bignum y un digito (int)
-    if(factor1.largo() < 2) return (factor2 *= int(factor1.digito(0))); 
-    if(factor2.largo() < 2) return (factor1 *= int(factor2.digito(0)));
+    if(factor1.largo() < 2) return ( factor2.mult_digito( factor1.digito(0) ) ); 
+    if(factor2.largo() < 2) return ( factor1.mult_digito( factor2.digito(0) ) );
+    
+    //if(factor1.largo() < UMBRAL_KARAT) return (factor2 *= factor1.modulo_int()  ); 
+    //if(factor2.largo() < UMBRAL_KARAT) return (factor1 *= factor2.modulo_int() );
     // Creo los subnumeros
     bignumKarat low1 = factor1.borrar_digitos(0, m);
     bignumKarat low2 = factor2.borrar_digitos(0, m);    

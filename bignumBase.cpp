@@ -447,7 +447,7 @@ bignumBase &bignumBase::operator*=(int numero)
     {
         *aux = _digitos[i] * numero;
         *acumulador += aux->_desplazamiento_izq(i);
-        acumulador->_actualizar_largo();       
+        // acumulador->_actualizar_largo();       
     }
     acumulador->_actualizar_largo();
 
@@ -584,6 +584,14 @@ string bignumBase::bignum_to_string()
 
 
 
-void bignumBase::set_digito(int valor, int posicion){
-    this->_digitos[posicion] = valor;
+void bignumBase::set_digito(int valor, size_t posicion){
+    if(posicion >= _precision)
+    {
+        _cambiar_precision(_precision + AUMENTO_BLOQUE_PRECISION);
+        _largo = posicion +1;
+        
+    }
+    _digitos[posicion] = valor;
+    _actualizar_largo();
+
 }
